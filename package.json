@@ -1,0 +1,8 @@
+{
+  "name": "sql",
+  "version": "1.0.0",
+  "description": "SQL Interview Practice Console - 200 MCQs",
+  "scripts": {
+    "deploy": "vercel --prod"
+  }
+}

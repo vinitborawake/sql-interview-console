@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Interview Console — 200 Practice MCQs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF2F8;
+    --surface: #FFFFFF;
+    --surface-elevated: #F8FAFC;
+    --ink: #10162F;
+    --ink-soft: #535A74;
+    --ink-faint: #8E95AF;
+    --primary: #2747D9;
+    --primary-hover: #1E3BBF;
+    --primary-deep: #0D1328;
+    --sec-a: #2747D9;
+    --sec-a-soft: #E8EDFD;
+    --sec-b: #793BE4;
+    --sec-b-soft: #EFE7FC;
+    --good: #139767;
+    --good-soft: #DDF3EA;
+    --warn: #D88714;
+    --warn-soft: #FBECD7;
+    --bad: #D8423B;
+    --bad-soft: #FCE1DF;
+    --line: #D9DFEE;
+    --shadow: 0 1px 3px rgba(16,22,47,.05), 0 12px 28px -10px rgba(16,22,47,.12);
+    --radius: 12px;
+    --code-bg: #F4F6FC;
+  }
+
+  body.dark {
+    --bg: #0A0E1A;
+    --surface: #121829;
+    --surface-elevated: #172036;
+    --ink: #EDF1FD;
+    --ink-soft: #9BA4C2;
+    --ink-faint: #636D8E;
+    --primary: #4F6DFA;
+    --primary-hover: #6783FC;
+    --primary-deep: #080C16;
+    --sec-a: #4F6DFA;
+    --sec-a-soft: #18234D;
+    --sec-b: #9D6EFA;
+    --sec-b-soft: #271C4A;
+    --good: #2AD192;
+    --good-soft: #0E3625;
+    --warn: #F6AA38;
+    --warn-soft: #38240D;
+    --bad: #F65F58;
+    --bad-soft: #3B1615;
+    --line: #222C46;
+    --shadow: 0 1px 4px rgba(0,0,0,.4), 0 12px 30px -8px rgba(0,0,0,.5);
+    --code-bg: #182035;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    transition: background-color .2s ease, color .2s ease;
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  .display { font-family: 'Space Grotesk', sans-serif; }
+  .screen { width: 100%; }
+  .screen[hidden] { display: none !important; }
+
+  /* ---------- START SCREEN ---------- */
+  .start-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+  .start-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: .04em;
+    color: var(--primary);
+    background: var(--sec-a-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .start-eyebrow::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--good);
+    box-shadow: 0 0 0 3px var(--good-soft);
+  }
+  .start-title {
+    font-size: 42px;
+    line-height: 1.12;
+    font-weight: 700;
+    margin: 20px 0 14px;
+    letter-spacing: -.02em;
+  }
+  .start-title .accent { color: var(--primary); }
+  .start-sub {
+    font-size: 16.5px;
+    color: var(--ink-soft);
+    max-width: 720px;
+    line-height: 1.6;
+    margin-bottom: 34px;
+  }
+
+  .console-card {
+    background: var(--primary-deep);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    color: #E8EAFD;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    line-height: 1.85;
+    margin-bottom: 36px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .console-card .c-line { display: flex; gap: 10px; }
+  .console-card .c-prompt { color: #7C8CF0; flex-shrink: 0; }
+  .console-card .c-out { color: #82EDB2; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 38px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    box-shadow: var(--shadow);
+  }
+  .stat-card .num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .stat-card .lbl {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .mode-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 26px;
+    border-bottom: 2px solid var(--line);
+  }
+  .mode-tab {
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 15.5px;
+    color: var(--ink-soft);
+    padding: 12px 6px;
+    margin-bottom: -2px;
+    border-bottom: 3px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .mode-tab:hover { color: var(--primary); }
+  .mode-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+
+  .start-btn {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    background: var(--primary);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 15px 32px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 20px -6px rgba(39,71,217,.55);
+    transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+  }
+  .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -6px rgba(39,71,217,.65);
+    background: var(--primary-hover);
+  }
+  .start-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .start-foot {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--ink-faint);
+    max-width: 680px;
+    line-height: 1.6;
+  }
+
+  /* Mode panels */
+  .config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+  .config-card {
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .config-card label {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .config-card select {
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--line);
+    background: var(--surface-elevated);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .topic-card {
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s, transform .12s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .topic-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .topic-card.selected {
+    border-color: var(--primary);
+    background: var(--sec-a-soft);
+  }
+  .topic-card h4 {
+    margin: 0 0 4px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+  }
+  .topic-card .tc-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--bg);
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .topic-card.selected .tc-count {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  /* ---------- TEST SCREEN ---------- */
+  .topbar {
+    background: var(--primary-deep);
+    color: #fff;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    box-shadow: 0 2px 10px rgba(0,0,0,.15);
+  }
+  .topbar .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topbar .brand .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #49DE80;
+    box-shadow: 0 0 0 3px rgba(73,222,128,.3);
+  }
+  .topbar .brand b {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    letter-spacing: -.01em;
+  }
+  .sec-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--sec-a-soft);
+    color: var(--sec-a);
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .timer-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 17px;
+    font-weight: 600;
+    background: rgba(255,255,255,.09);
+    color: #fff;
+    padding: 7px 14px;
+    border-radius: 8px;
+    letter-spacing: .04em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .timer-chip.low {
+    color: #FFA494;
+    background: rgba(216,66,59,.3);
+  }
+  .jump-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,.08);
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+  .jump-box label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: #A6B4DF;
+  }
+  .jump-box input {
+    width: 50px;
+    background: rgba(0,0,0,.3);
+    border: 1px solid rgba(255,255,255,.2);
+    color: #fff;
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    text-align: center;
+  }
+  .theme-toggle-btn {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    color: #fff;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 7px 11px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+  }
+  .theme-toggle-btn:hover { background: rgba(255,255,255,.2); }
+  .topbar-btn {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--primary-deep);
+    transition: background .12s, transform .12s;
+  }
+  .topbar-btn:hover {
+    background: #EAEFFC;
+    transform: translateY(-1px);
+  }
+
+  /* 3-Column Layout */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr 280px;
+    gap: 20px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 22px 22px 60px;
+    align-items: start;
+  }
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 76px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+  }
+  .card h4 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--ink-faint);
+    font-weight: 600;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    padding: 6px 0;
+    color: var(--ink-soft);
+    border-bottom: 1px dashed var(--line);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row b {
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    padding: 5px 0;
+  }
+  .legend-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    border: 1.5px solid transparent;
+  }
+  .legend-swatch.nv { background: #DFE3EC; border-color: var(--line); }
+  .legend-swatch.na { background: var(--warn-soft); border-color: var(--warn); }
+  .legend-swatch.an { background: var(--good-soft); border-color: var(--good); }
+  .legend-swatch.mk { background: var(--sec-b-soft); border-color: var(--sec-b); }
+  .legend-swatch.am { background: linear-gradient(135deg, var(--good-soft) 50%, var(--sec-b-soft) 50%); border-color: var(--sec-b); }
+
+  /* Question Card */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 30px 32px 28px;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+  }
+  .q-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .q-no {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .q-topic {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  .marks-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--good-soft);
+    color: var(--good);
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .q-text {
+    font-size: 17px;
+    line-height: 1.65;
+    margin-bottom: 26px;
+    white-space: pre-wrap;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .q-text code, .q-text .code-block {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: block;
+    white-space: pre;
+    overflow-x: auto;
+    font-size: 13.5px;
+    margin-top: 10px;
+    color: var(--ink);
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: auto;
+  }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 15.5px;
+    transition: border-color .12s, background-color .12s, transform .1s;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .opt:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .opt .ltr {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+    color: var(--ink-soft);
+  }
+  .opt.selected {
+    border-color: var(--primary);
+    background: var(--sec-a-soft);
+  }
+  .opt.selected .ltr {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .opt.correct {
+    border-color: var(--good) !important;
+    background: var(--good-soft) !important;
+  }
+  .opt.correct .ltr {
+    background: var(--good) !important;
+    color: #fff !important;
+    border-color: var(--good) !important;
+  }
+  .opt.incorrect {
+    border-color: var(--bad) !important;
+    background: var(--bad-soft) !important;
+  }
+  .opt.incorrect .ltr {
+    background: var(--bad) !important;
+    color: #fff !important;
+    border-color: var(--bad) !important;
+  }
+
+  /* Explanation panel */
+  .expl-toggle-row {
+    margin-top: 22px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .expl-toggle-btn {
+    appearance: none;
+    border: 1.5px solid var(--primary);
+    background: var(--sec-a-soft);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 9px 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color .15s, transform .1s;
+  }
+  .expl-toggle-btn:hover {
+    transform: translateY(-1px);
+    background: var(--primary);
+    color: #fff;
+  }
+  .expl-panel {
+    margin-top: 14px;
+    background: var(--good-soft);
+    border: 1.5px solid var(--good);
+    border-radius: 12px;
+    padding: 16px 20px;
+    animation: fadeIn .2s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .expl-correct-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--good);
+  }
+  .expl-panel p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .expl-panel[hidden] { display: none !important; }
+
+  /* Question Footer buttons */
+  .q-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 26px;
+    flex-wrap: wrap;
+  }
+  .q-foot-left, .q-foot-right {
+    display: flex;
+    gap: 10px;
+  }
+  .btn {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 11px 18px;
+    border-radius: 9px;
+    transition: transform .12s, opacity .15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-mark { background: var(--sec-b-soft); color: var(--sec-b); }
+  .btn-clear { background: var(--bad-soft); color: var(--bad); }
+  .btn-nav { background: var(--surface-elevated); color: var(--ink); border: 1.5px solid var(--line); }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  /* Palette */
+  .palette-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .palette-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .pal-tab {
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: var(--ink-faint);
+  }
+  .pal-tab.active {
+    background: var(--sec-a-soft);
+    color: var(--primary);
+  }
+  .palette-scroll {
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .palette-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .palette-scroll::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 4px;
+  }
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .p-btn {
+    aspect-ratio: 1;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: #E2E6F0;
+    color: var(--ink-soft);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .1s, border-color .1s;
+  }
+  body.dark .p-btn { background: #1B2238; }
+  .p-btn:hover { transform: scale(1.08); border-color: var(--primary); }
+  .p-btn.na { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+  .p-btn.an { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .p-btn.mk { background: var(--sec-b-soft); border-color: var(--sec-b); color: var(--sec-b); }
+  .p-btn.am { background: linear-gradient(135deg, var(--good-soft) 50%, var(--sec-b-soft) 50%); border-color: var(--sec-b); color: var(--ink); }
+  .p-btn.active {
+    outline: 2.5px solid var(--primary);
+    outline-offset: 1.5px;
+  }
+
+  /* ---------- RESULT SCREEN ---------- */
+  .result-wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+  .result-hero {
+    text-align: center;
+    margin-bottom: 38px;
+  }
+  .result-hero .score {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 68px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .result-hero .outof {
+    font-size: 20px;
+    color: var(--ink-faint);
+  }
+  .verdict-chip {
+    display: inline-flex;
+    margin-top: 10px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .verdict-chip.high { background: var(--good-soft); color: var(--good); }
+  .verdict-chip.mid { background: var(--warn-soft); color: var(--warn); }
+  .verdict-chip.low { background: var(--bad-soft); color: var(--bad); }
+
+  .res-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 26px;
+  }
+  .res-topic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 26px;
+  }
+  .res-topic-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .res-topic-card h4 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .res-bar-wrap {
+    height: 8px;
+    background: var(--bg);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .res-bar-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 999px;
+    transition: width .4s ease;
+  }
+  .res-actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- REVIEW SCREEN ---------- */
+  .review-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  .review-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .rev-filter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .rev-filter-btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .12s;
+  }
+  .rev-filter-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .rev-q {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .rev-q .rq-head {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-weight: 600;
+  }
+  .rev-q .rq-text {
+    font-size: 16px;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    font-weight: 500;
+  }
+  .rev-opt {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1.5px solid var(--line);
+  }
+  .rev-opt.correct {
+    border-color: var(--good);
+    background: var(--good-soft);
+    font-weight: 600;
+  }
+  .rev-opt.incorrect {
+    border-color: var(--bad);
+    background: var(--bad-soft);
+  }
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .tag.unattempted { background: var(--warn-soft); color: var(--warn); }
+  .tag.correct { background: var(--good-soft); color: var(--good); }
+  .tag.incorrect { background: var(--bad-soft); color: var(--bad); }
+
+  /* Toast & Modals */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--primary-deep);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .22s ease;
+    box-shadow: var(--shadow);
+    z-index: 100;
+    font-weight: 500;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 14, 26, .65);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .confirm-overlay[hidden] { display: none !important; }
+  .confirm-box {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 28px 28px 22px;
+    max-width: 440px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid var(--line);
+  }
+  .confirm-box h3 {
+    margin: 0 0 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+  }
+  .confirm-box p {
+    margin: 0 0 20px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 1fr; }
+    .rail { position: static; }
+    .palette-grid { grid-template-columns: repeat(10, 1fr); }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .topic-grid { grid-template-columns: 1fr; }
+    .res-overview-grid { grid-template-columns: repeat(2, 1fr); }
+    .res-topic-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .start-title { font-size: 32px; }
+    .topbar { padding: 12px 16px; }
+    .layout { padding: 14px; }
+    .question-card { padding: 20px; }
+    .palette-grid { grid-template-columns: repeat(6, 1fr); }
+    .stat-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ================= START SCREEN ================= -->
+  <section id="screen-start" class="screen">
+    <div class="start-wrap">
+      <span class="start-eyebrow">A-Z SQL INTERVIEW PRACTICE CONSOLE</span>
+      <h1 class="start-title">Crack SQL Interviews<br>with <span class="accent">200 High-Yield MCQs.</span></h1>
+      <p class="start-sub">Practice 200 real-world SQL interview questions with instant answers, deep explanations, question palettes, topic drilling, and timed mock tests.</p>
+
+      <div class="console-card">
+        <div class="c-line"><span class="c-prompt">$</span><span>sql_runner --bank=interview_200 --explanations=true --engine=interactive</span></div>
+        <div class="c-line"><span class="c-prompt">&gt;</span><span class="c-out">loaded 200 verified SQL questions across 10 core database topics…</span></div>
+        <div class="c-line"><span class="c-prompt">&gt;</span><span class="c-out">ready. select your training mode below to begin.</span></div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num">200</div><div class="lbl">curated SQL questions</div></div>
+        <div class="stat-card"><div class="num">10</div><div class="lbl">database topic areas</div></div>
+        <div class="stat-card"><div class="num">Instant</div><div class="lbl">answers &amp; explanations</div></div>
+        <div class="stat-card"><div class="num">3</div><div class="lbl">practice &amp; mock modes</div></div>
+      </div>
+
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="tab-master" data-mode="master">All 200 Questions</button>
+        <button class="mode-tab" id="tab-mock" data-mode="mock">Timed Mock Exam</button>
+        <button class="mode-tab" id="tab-topic" data-mode="topic">Topic-wise Drill</button>
+      </div>
+
+      <!-- ---- MODE 1: MASTER 200 QUESTIONS ---- -->
+      <div id="mode-panel-master">
+        <div class="config-grid">
+          <div class="config-card">
+            <label for="master-order">Question Order</label>
+            <select id="master-order">
+              <option value="seq" selected>Sequential (Q1 to Q200)</option>
+              <option value="shuffle">Randomly Shuffled</option>
+            </select>
+          </div>
+          <div class="config-card">
+            <label for="master-timer">Timer Mode</label>
+            <select id="master-timer">
+              <option value="untimed" selected>Untimed (Self-paced study)</option>
+              <option value="countup">Count-up Timer</option>
+              <option value="120">120 Minutes Countdown</option>
+              <option value="60">60 Minutes Countdown</option>
+            </select>
+          </div>
+          <div class="config-card">
+            <label for="master-marking">Scoring Scheme</label>
+            <select id="master-marking">
+              <option value="standard" selected>Standard (+1 / 0)</option>
+              <option value="ccat">C-CAT Style (+3 / −1)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="start-btn" id="btn-start-master">▶ Start All 200 Questions</button>
+        <p class="start-foot">Go through all 200 questions with full palette navigation, immediate answer reveal toggles, and detailed conceptual explanations for each query.</p>
+      </div>
+
+      <!-- ---- MODE 2: MOCK EXAM ---- -->
+      <div id="mode-panel-mock" hidden>
+        <div class="config-grid">
+          <div class="config-card">
+            <label for="mock-qcount">Questions</label>
+            <select id="mock-qcount">
+              <option value="25">25 Questions (Sprint)</option>
+              <option value="50" selected>50 Questions (Standard Mock)</option>
+              <option value="100">100 Questions (Half Mock)</option>
+            </select>
+          </div>
+          <div class="config-card">
+            <label for="mock-duration">Time Limit</label>
+            <select id="mock-duration">
+              <option value="30">30 Minutes</option>
+              <option value="45" selected>45 Minutes</option>
+              <option value="60">60 Minutes</option>
+            </select>
+          </div>
+          <div class="config-card">
+            <label for="mock-marking">Marking</label>
+            <select id="mock-marking">
+              <option value="ccat" selected>C-CAT Style (+3 / −1)</option>
+              <option value="standard">Standard (+1 / 0)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="start-btn" id="btn-start-mock">▶ Launch Mock Exam</button>
+        <p class="start-foot">Randomly samples a fresh batch from the 200 question pool with a strict timer. Perfect for testing exam readiness under real pressure.</p>
+      </div>
+
+      <!-- ---- MODE 3: TOPIC DRILL ---- -->
+      <div id="mode-panel-topic" hidden>
+        <p class="start-sub" style="margin-bottom: 16px;">Select a specific database subject to master:</p>
+        <div class="topic-grid" id="topic-grid"></div>
+
+        <div class="config-grid">
+          <div class="config-card">
+            <label for="topic-qcount">Questions</label>
+            <select id="topic-qcount">
+              <option value="10">10 Questions</option>
+              <option value="20" selected>20 Questions</option>
+              <option value="all">All Questions in Subject</option>
+            </select>
+          </div>
+          <div class="config-card">
+            <label for="topic-timed">Timer</label>
+            <select id="topic-timed">
+              <option value="untimed" selected>Untimed Practice</option>
+              <option value="timed">Timed (1 min / question)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="start-btn" id="btn-start-topic" disabled>▶ Select a Topic Above to Start</button>
+        <p class="start-foot">Target weak topics like Window Functions, Normalization, or Indexing before taking full tests.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TEST SCREEN ================= -->
+  <section id="screen-test" class="screen" hidden>
+    <div class="topbar">
+      <div class="brand">
+        <span class="dot"></span>
+        <b>SQL Interview Console</b>
+        <span class="sec-badge" id="topbar-badge">ALL 200 QUESTIONS</span>
+      </div>
+      <div class="topbar-right">
+        <div class="jump-box">
+          <label for="jump-input">Go to #</label>
+          <input type="number" id="jump-input" min="1" max="200" placeholder="Q#">
+        </div>
+        <div class="timer-chip mono" id="timer-chip">00:00</div>
+        <button class="theme-toggle-btn" id="btn-theme-toggle" title="Toggle Dark/Light Mode">🌙</button>
+        <button class="topbar-btn" id="btn-finish-test">Finish Practice</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- Left Rail -->
+      <aside class="rail">
+        <div class="card">
+          <h4>Progress</h4>
+          <div class="stat-row"><span>Total Completed</span><b id="stat-progress-pct">0%</b></div>
+          <div class="stat-row"><span>Answered</span><b id="stat-answered" style="color:var(--good)">0</b></div>
+          <div class="stat-row"><span>Not Answered</span><b id="stat-notanswered" style="color:var(--warn)">0</b></div>
+          <div class="stat-row"><span>Marked for Review</span><b id="stat-marked" style="color:var(--sec-b)">0</b></div>
+          <div class="stat-row"><span>Not Visited</span><b id="stat-notvisited">200</b></div>
+        </div>
+
+        <div class="card">
+          <h4>Practice Score</h4>
+          <div class="stat-row"><span>Correct</span><b id="stat-correct" style="color:var(--good)">0</b></div>
+          <div class="stat-row"><span>Incorrect</span><b id="stat-incorrect" style="color:var(--bad)">0</b></div>
+          <div class="stat-row"><span>Accuracy</span><b id="stat-accuracy">0%</b></div>
+        </div>
+
+        <div class="card">
+          <h4>Legend</h4>
+          <div class="legend-row"><span class="legend-swatch nv"></span>Not visited</div>
+          <div class="legend-row"><span class="legend-swatch na"></span>Not answered</div>
+          <div class="legend-row"><span class="legend-swatch an"></span>Answered</div>
+          <div class="legend-row"><span class="legend-swatch mk"></span>Marked for review</div>
+          <div class="legend-row"><span class="legend-swatch am"></span>Answered &amp; marked</div>
+        </div>
+      </aside>
+
+      <!-- Center Question Area -->
+      <main class="question-card">
+        <div class="q-head">
+          <div>
+            <div class="q-no" id="q-no">Question 1 of 200</div>
+            <div class="q-topic" id="q-topic">DDL, DML &amp; TCL Commands</div>
+          </div>
+          <div class="marks-chip" id="q-marks-chip">+1 / 0</div>
+        </div>
+
+        <div class="q-text" id="q-text">Loading question…</div>
+        <div class="options" id="q-options"></div>
+
+        <div class="expl-toggle-row">
+          <button class="expl-toggle-btn" id="btn-toggle-expl">💡 Show Answer &amp; Explanation</button>
+        </div>
+
+        <div class="expl-panel" id="expl-panel" hidden>
+          <div class="expl-correct-line">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="currentColor"/><path d="M4.5 8l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Correct Answer: <strong id="expl-correct-text"></strong></span>
+          </div>
+          <p id="expl-text"></p>
+        </div>
+
+        <div class="q-foot">
+          <div class="q-foot-left">
+            <button class="btn btn-mark" id="btn-mark">🔖 Mark for Review</button>
+            <button class="btn btn-clear" id="btn-clear">Clear Selection</button>
+          </div>
+          <div class="q-foot-right">
+            <button class="btn btn-nav" id="btn-prev">← Prev</button>
+            <button class="btn btn-primary" id="btn-next">Next →</button>
+          </div>
+        </div>
+      </main>
+
+      <!-- Right Rail (Palette) -->
+      <aside class="rail">
+        <div class="card">
+          <div class="palette-header">
+            <h4 style="margin:0;">Palette</h4>
+            <div class="palette-tabs">
+              <button class="pal-tab active" data-filter="all">All</button>
+              <button class="pal-tab" data-filter="unans">Unans</button>
+              <button class="pal-tab" data-filter="marked">Marked</button>
+            </div>
+          </div>
+          <div class="palette-scroll">
+            <div class="palette-grid" id="palette"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= RESULT SCREEN ================= -->
+  <section id="screen-result" class="screen" hidden>
+    <div class="result-wrap">
+      <div class="result-hero">
+        <h2 class="display" style="font-size:22px;color:var(--ink-soft);margin-bottom:8px;">TEST COMPLETE</h2>
+        <span class="score" id="res-score">0</span><span class="outof" id="res-outof"> / 200</span>
+        <div><span class="verdict-chip high" id="res-verdict">Excellent Performance</span></div>
+      </div>
+
+      <div class="res-overview-grid">
+        <div class="stat-card">
+          <div class="num" id="res-accuracy" style="color:var(--primary);">0%</div>
+          <div class="lbl">Accuracy</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="res-attempted" style="color:var(--good);">0</div>
+          <div class="lbl">Attempted</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="res-correct" style="color:var(--good);">0</div>
+          <div class="lbl">Correct</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="res-time">00:00</div>
+          <div class="lbl">Time Taken</div>
+        </div>
+      </div>
+
+      <h3 class="display" style="font-size:18px;margin:30px 0 16px;">Performance by Topic</h3>
+      <div class="res-topic-grid" id="res-topic-grid"></div>
+
+      <div class="res-actions">
+        <button class="btn btn-nav" id="btn-review-answers" style="padding:14px 28px;font-size:15px;">🔍 Review Every Question</button>
+        <button class="btn btn-primary" id="btn-restart-test" style="padding:14px 28px;font-size:15px;">▶ Start New Practice</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= REVIEW SCREEN ================= -->
+  <section id="screen-review" class="screen" hidden>
+    <div class="review-wrap">
+      <div class="review-top">
+        <h2 class="display" style="font-size:24px;">Question Review</h2>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-nav" id="btn-back-score">← Back to Score</button>
+          <button class="btn btn-primary" id="btn-restart-test-2">New Test</button>
+        </div>
+      </div>
+
+      <div class="rev-filter-tabs">
+        <button class="rev-filter-btn active" data-rev-filter="all">All Questions</button>
+        <button class="rev-filter-btn" data-rev-filter="incorrect">Incorrect Only</button>
+        <button class="rev-filter-btn" data-rev-filter="unattempted">Unattempted</button>
+        <button class="rev-filter-btn" data-rev-filter="marked">Marked for Review</button>
+      </div>
+
+      <div id="review-list"></div>
+    </div>
+  </section>
+
+</div>
+
+<div id="toast"></div>
+
+<!-- Confirm Modal -->
+<div id="confirm-overlay" class="confirm-overlay" hidden>
+  <div class="confirm-box">
+    <h3 id="confirm-title">Finish Practice?</h3>
+    <p id="confirm-message">Are you sure you want to submit? You have unanswered questions remaining.</p>
+    <div class="confirm-actions">
+      <button class="btn btn-nav" id="confirm-cancel">Continue Practice</button>
+      <button class="btn btn-primary" id="confirm-ok">Yes, Submit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SQL QUESTION BANK (200 QUESTIONS)
+   ============================================================ */
+const QUESTION_BANK = [{"id": 1, "question": "Which of the following is a DDL command?", "options": ["INSERT", "UPDATE", "CREATE", "DELETE"], "answer": 2, "answer_text": "CREATE", "topic": "Commands · DDL", "explanation": "DDL (Data Definition Language) commands modify the database schema. CREATE defines new tables, views, or databases. In contrast, INSERT, UPDATE, and DELETE are DML commands.", "category": "DDL, DML & TCL Commands"}, {"id": 2, "question": "Which of the following is a DML command?", "options": ["ALTER", "DROP", "SELECT", "UPDATE"], "answer": 3, "answer_text": "UPDATE", "topic": "Commands · DML", "explanation": "DML (Data Manipulation Language) commands manage data within schema objects. UPDATE modifies existing data. ALTER and DROP are DDL commands, and SELECT is DQL/DML.", "category": "DDL, DML & TCL Commands"}, {"id": 3, "question": "Which SQL command permanently saves a transaction?", "options": ["SAVEPOINT", "COMMIT", "ROLLBACK", "DELETE"], "answer": 1, "answer_text": "COMMIT", "topic": "Commands · TCL", "explanation": "COMMIT is a Transaction Control Language (TCL) command that permanently writes all changes made during the current transaction to disk, releasing locks.", "category": "DDL, DML & TCL Commands"}, {"id": 4, "question": "Which command is used to remove all records but keep the table structure?", "options": ["DELETE", "TRUNCATE", "DROP", "ALTER"], "answer": 1, "answer_text": "TRUNCATE", "topic": "Commands · DDL", "explanation": "TRUNCATE is a DDL command that quickly removes all rows from a table by deallocating data pages while preserving the table structure, columns, constraints, and indexes.", "category": "DDL, DML & TCL Commands"}, {"id": 5, "question": "Which SQL command is used to undo a transaction?", "options": ["ROLLBACK", "COMMIT", "SAVEPOINT", "DELETE"], "answer": 0, "answer_text": "ROLLBACK", "topic": "Commands · TCL", "explanation": "ROLLBACK is a TCL command used to undo uncommitted transactions, restoring data to its state before the transaction began or to a specified SAVEPOINT.", "category": "DDL, DML & TCL Commands"}, {"id": 6, "question": "Which SQL JOIN returns only matching records from both tables?", "options": ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN"], "answer": 0, "answer_text": "INNER JOIN", "topic": "Joins · Inner Join", "explanation": "An INNER JOIN evaluates the join condition and returns only rows that have matching values in both tables, omitting unmatched records from either table.", "category": "Joins & Set Operations"}, {"id": 7, "question": "Which JOIN includes all records from the left table and matching records from the right table?", "options": ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN"], "answer": 1, "answer_text": "LEFT JOIN", "topic": "Joins · Outer Join", "explanation": "A LEFT JOIN (or LEFT OUTER JOIN) returns all rows from the left table, along with matching rows from the right table. Non-matching right rows are populated with NULL.", "category": "Joins & Set Operations"}, {"id": 8, "question": "Which JOIN retrieves all records from both tables?", "options": ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN"], "answer": 3, "answer_text": "FULL JOIN", "topic": "Joins · Outer Join", "explanation": "A FULL JOIN (FULL OUTER JOIN) combines the results of both LEFT and RIGHT joins, returning all rows from both tables and filling in NULLs where matches do not exist.", "category": "Joins & Set Operations"}, {"id": 9, "question": "What is the default type of JOIN in SQL if none is specified?", "options": ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "CROSS JOIN"], "answer": 0, "answer_text": "INNER JOIN", "topic": "Joins · Basics", "explanation": "In standard ANSI SQL, specifying 'JOIN' without any qualifying keyword (INNER, LEFT, RIGHT, FULL) defaults to an INNER JOIN.", "category": "Joins & Set Operations"}, {"id": 10, "question": "Which JOIN returns all possible combinations of rows from two tables?", "options": ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "CROSS JOIN"], "answer": 3, "answer_text": "CROSS JOIN", "topic": "Joins · Cross Join", "explanation": "A CROSS JOIN produces the Cartesian product of two tables, pairing every row from the first table with every row from the second table (Total rows = N × M).", "category": "Joins & Set Operations"}, {"id": 11, "question": "Which constraint ensures a column has unique values?", "options": ["CHECK", "UNIQUE", "FOREIGN KEY", "DEFAULT"], "answer": 1, "answer_text": "UNIQUE", "topic": "Constraints · Keys", "explanation": "The UNIQUE constraint ensures that all values in a column (or group of columns) are distinct across the table. Unlike PRIMARY KEY, UNIQUE permits one or more NULL values depending on the RDBMS.", "category": "Keys, Constraints & Data Types"}, {"id": 12, "question": "Which constraint prevents NULL values in a column?", "options": ["NOT NULL", "CHECK", "UNIQUE", "FOREIGN KEY"], "answer": 0, "answer_text": "NOT NULL", "topic": "Constraints · Integrity", "explanation": "The NOT NULL constraint enforces that a column cannot store NULL values, requiring an explicit valid value on every INSERT or UPDATE.", "category": "Keys, Constraints & Data Types"}, {"id": 13, "question": "Which constraint enforces a relationship between two tables?", "options": ["UNIQUE", "FOREIGN KEY", "CHECK", "PRIMARY KEY"], "answer": 1, "answer_text": "FOREIGN KEY", "topic": "Constraints · Referential", "explanation": "A FOREIGN KEY creates a relationship between a child table's column and a parent table's PRIMARY KEY or UNIQUE key, enforcing referential integrity.", "category": "Keys, Constraints & Data Types"}, {"id": 14, "question": "Which constraint sets a default value for a column?", "options": ["CHECK", "FOREIGN KEY", "DEFAULT", "NOT NULL"], "answer": 2, "answer_text": "DEFAULT", "topic": "Constraints · Defaults", "explanation": "The DEFAULT constraint specifies a fallback value that is automatically assigned to a column if no explicit value is supplied in an INSERT statement.", "category": "Keys, Constraints & Data Types"}, {"id": 15, "question": "What is the difference between UNION and UNION ALL?", "options": ["UNION removes duplicates, UNION ALL keeps them", "UNION ALL removes duplicates, UNION keeps them", "Both remove duplicates", "Both keep duplicates"], "answer": 0, "answer_text": "UNION removes duplicates, UNION ALL keeps them", "topic": "Set Operations · UNION", "explanation": "UNION combines the result sets of two or more SELECT queries and removes duplicate records, whereas UNION ALL retains all rows including duplicates without filtering.", "category": "Joins & Set Operations"}, {"id": 16, "question": "Which SQL command is used to create a view?", "options": ["CREATE VIEW", "MAKE VIEW", "DEFINE VIEW", "NEW VIEW"], "answer": 0, "answer_text": "CREATE VIEW", "topic": "Views · DDL", "explanation": "The CREATE VIEW statement defines a virtual table based on the result set of an underlying SQL SELECT query, without physically duplicating data on disk.", "category": "Views, Subqueries & CTEs"}, {"id": 17, "question": "A subquery is executed in which order?", "options": ["Before the main query", "After the main query", "Simultaneously", "Randomly"], "answer": 0, "answer_text": "Before the main query", "topic": "Subqueries · Execution", "explanation": "In standard non-correlated subqueries, the inner subquery executes first, and its result is then passed to the outer main query for evaluation.", "category": "Views, Subqueries & CTEs"}, {"id": 18, "question": "What is the purpose of an index in SQL?", "options": ["To store data", "To optimize query performance", "To delete data faster", "To manage transactions"], "answer": 1, "answer_text": "To optimize query performance", "topic": "Indexes · Optimization", "explanation": "An index is a data structure (commonly a B-Tree) that enables the database engine to find specific rows rapidly without scanning the entire table.", "category": "Indexes & Performance Optimization"}, {"id": 19, "question": "Which SQL function ranks rows with unique values?", "options": ["RANK()", "DENSE_RANK()", "ROW_NUMBER()", "NTILE()"], "answer": 2, "answer_text": "ROW_NUMBER()", "topic": "Functions · Window Functions", "explanation": "ROW_NUMBER() assigns a unique, sequential integer to each row within a partition, regardless of duplicate or identical values in the ORDER BY clause.", "category": "Aggregate & Scalar Functions"}, {"id": 20, "question": "What is a stored procedure?", "options": ["A compiled SQL query", "A temporary table", "A view", "A database constraint"], "answer": 0, "answer_text": "A compiled SQL query", "topic": "Procedures · Overview", "explanation": "A stored procedure is a precompiled collection of one or more SQL statements saved in the database catalog that can be executed repeatedly with input/output parameters.", "category": "Stored Procedures & Triggers"}, {"id": 21, "question": "When does a trigger execute?", "options": ["Before or after a DML event", "During a SELECT query", "Only after a transaction", "Only before a transaction"], "answer": 0, "answer_text": "Before or after a DML event", "topic": "Triggers · Execution", "explanation": "A trigger is a database object that automatically fires in response to specific DML events (INSERT, UPDATE, DELETE) either BEFORE the action occurs or AFTER it commits.", "category": "Stored Procedures & Triggers"}, {"id": 22, "question": "Which SQL command is used to create a savepoint?", "options": ["SAVEPOINT", "CHECKPOINT", "COMMIT", "ROLLBACK"], "answer": 0, "answer_text": "SAVEPOINT", "topic": "Commands · TCL", "explanation": "The SAVEPOINT command sets a marker within a transaction, allowing a subsequent ROLLBACK TO SAVEPOINT to undo operations up to that point without aborting the entire transaction.", "category": "DDL, DML & TCL Commands"}, {"id": 23, "question": "Which SQL command permanently saves a transaction?", "options": ["COMMIT", "ROLLBACK", "DELETE", "SAVEPOINT"], "answer": 0, "answer_text": "COMMIT", "topic": "Commands · TCL", "explanation": "COMMIT finalizes the current transaction, making all data modifications permanent and visible to other concurrent database sessions.", "category": "DDL, DML & TCL Commands"}, {"id": 24, "question": "Which SQL function retrieves the current date?", "options": ["GETDATE()", "NOW()", "CURDATE()", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Functions · Date & Time", "explanation": "Different SQL dialects provide various functions to get the current date: CURDATE(), CURRENT_DATE, and GETDATE() (in SQL Server), so 'All of the above' are valid across dialects.", "category": "Aggregate & Scalar Functions"}, {"id": 25, "question": "Which of the following is a comparison operator in SQL?", "options": ["AND", "=", "LIKE", "IN"], "answer": 1, "answer_text": "=", "topic": "Operators · Comparison", "explanation": "The equals sign (=) is the primary relational comparison operator used to test equality between expressions or column values.", "category": "Clauses, Filtering & Sorting"}, {"id": 26, "question": "Which operator is used to check if a value exists in a list?", "options": ["LIKE", "IN", "BETWEEN", "EXISTS"], "answer": 1, "answer_text": "IN", "topic": "Operators · Logical", "explanation": "The IN operator allows testing whether a scalar value matches any value in a specified list of literals or a subquery result set.", "category": "Clauses, Filtering & Sorting"}, {"id": 27, "question": "Which operator is used to check if a value is NULL?", "options": ["= NULL", "IS NULL", "NULL", "EQUAL NULL"], "answer": 1, "answer_text": "IS NULL", "topic": "Operators · NULL Handling", "explanation": "In SQL, NULL represents an unknown value and cannot be compared using '=' or '!='; the dedicated 'IS NULL' (or 'IS NOT NULL') predicate must be used.", "category": "Clauses, Filtering & Sorting"}, {"id": 28, "question": "Which operator checks if a value falls within a given range?", "options": ["IN", "BETWEEN", "LIKE", "EXISTS"], "answer": 1, "answer_text": "BETWEEN", "topic": "Operators · Range", "explanation": "The BETWEEN operator tests whether a value lies within an inclusive range: 'column BETWEEN low AND high' is equivalent to 'column >= low AND column <= high'.", "category": "Clauses, Filtering & Sorting"}, {"id": 29, "question": "What will SELECT 10 % 3; return?", "options": ["0", "1", "3", "10"], "answer": 1, "answer_text": "1", "topic": "Operators · Arithmetic", "explanation": "The modulo operator (%) calculates the remainder of integer division. 10 divided by 3 equals 3 with a remainder of 1.", "category": "Clauses, Filtering & Sorting"}, {"id": 30, "question": "Which SQL function returns the total number of rows?", "options": ["COUNT()", "SUM()", "AVG()", "TOTAL()"], "answer": 0, "answer_text": "COUNT()", "topic": "Functions · Aggregates", "explanation": "COUNT() is an aggregate function that returns the total count of rows or non-null values matching the query criteria.", "category": "Aggregate & Scalar Functions"}, {"id": 31, "question": "Which aggregate function calculates the sum of a numeric column?", "options": ["SUM()", "AVG()", "COUNT()", "MAX()"], "answer": 0, "answer_text": "SUM()", "topic": "Functions · Aggregates", "explanation": "SUM() calculates the mathematical total of all non-null numeric values in a specified column or expression across the group.", "category": "Aggregate & Scalar Functions"}, {"id": 32, "question": "Which SQL function finds the highest value in a column?", "options": ["MAX()", "MIN()", "HIGH()", "TOP()"], "answer": 0, "answer_text": "MAX()", "topic": "Functions · Aggregates", "explanation": "MAX() returns the maximum (highest) value in a column or expression, working with numbers, dates, and alphabetic strings.", "category": "Aggregate & Scalar Functions"}, {"id": 33, "question": "Which function calculates the average of a column?", "options": ["COUNT()", "AVG()", "SUM()", "MEAN()"], "answer": 1, "answer_text": "AVG()", "topic": "Functions · Aggregates", "explanation": "AVG() calculates the arithmetic mean of all non-null numeric values in a column by dividing the sum by the count of non-null rows.", "category": "Aggregate & Scalar Functions"}, {"id": 34, "question": "Which function provides a cumulative sum of a column?", "options": ["SUM()", "CUME_SUM()", "OVER()", "SUM() OVER()"], "answer": 3, "answer_text": "SUM() OVER()", "topic": "Functions · Window Functions", "explanation": "SUM() OVER (ORDER BY ...) calculates a cumulative (running) total row-by-row across the partition without collapsing rows like a GROUP BY would.", "category": "Aggregate & Scalar Functions"}, {"id": 35, "question": "Which function assigns a unique rank to rows without skipping numbers?", "options": ["RANK()", "DENSE_RANK()", "ROW_NUMBER()", "NTILE()"], "answer": 1, "answer_text": "DENSE_RANK()", "topic": "Functions · Window Functions", "explanation": "DENSE_RANK() assigns sequential ranks to ordered rows; when duplicate values share a rank, subsequent ranks are consecutive without skipping numbers (1, 1, 2).", "category": "Aggregate & Scalar Functions"}, {"id": 36, "question": "Which SQL keyword is used to define a stored procedure?", "options": ["CREATE PROCEDURE", "NEW PROCEDURE", "MAKE PROCEDURE", "PROCEDURE CREATE"], "answer": 0, "answer_text": "CREATE PROCEDURE", "topic": "Procedures · DDL", "explanation": "The CREATE PROCEDURE statement defines a stored procedure in SQL, allowing parameterized code execution.", "category": "Stored Procedures & Triggers"}, {"id": 37, "question": "Which trigger fires before an update operation?", "options": ["BEFORE UPDATE", "AFTER UPDATE", "INSTEAD OF UPDATE", "UPDATE TRIGGER"], "answer": 0, "answer_text": "BEFORE UPDATE", "topic": "Triggers · Types", "explanation": "A BEFORE UPDATE trigger executes before the UPDATE modification is written to the table, allowing validation or modification of NEW and OLD row values.", "category": "Stored Procedures & Triggers"}, {"id": 38, "question": "What does the ROLLBACK command do?", "options": ["Saves the transaction", "Reverts the last committed transaction", "Deletes the table", "Commits all changes"], "answer": 1, "answer_text": "Reverts the last committed transaction", "topic": "Commands · TCL", "explanation": "ROLLBACK cancels changes made within the current uncommitted transaction, reverting the state back to the prior committed transaction or savepoint.", "category": "DDL, DML & TCL Commands"}, {"id": 39, "question": "Which TCL command temporarily saves a transaction?", "options": ["COMMIT", "SAVEPOINT", "ROLLBACK", "BEGIN TRANSACTION"], "answer": 1, "answer_text": "SAVEPOINT", "topic": "Commands · TCL", "explanation": "SAVEPOINT creates a named intermediate checkpoint within an open transaction, enabling partial rollback without undoing earlier actions.", "category": "DDL, DML & TCL Commands"}, {"id": 40, "question": "What is the main goal of normalization?", "options": ["Increase redundancy", "Reduce data anomalies", "Improve query speed", "Increase duplicate records"], "answer": 1, "answer_text": "Reduce data anomalies", "topic": "Normalization · Concepts", "explanation": "Normalization is the process of organizing database tables and columns to eliminate data redundancy and prevent insertion, update, and deletion anomalies.", "category": "Database Design & Normalization"}, {"id": 41, "question": "Which normalization form removes partial dependency?", "options": ["1NF", "2NF", "3NF", "BCNF"], "answer": 1, "answer_text": "2NF", "topic": "Normalization · 2NF", "explanation": "Second Normal Form (2NF) requires a table to be in 1NF and have no partial dependencies—meaning every non-key attribute must depend on the whole composite primary key.", "category": "Database Design & Normalization"}, {"id": 42, "question": "Which of the following helps improve query performance?", "options": ["Creating indexes", "Using SELECT *", "Storing duplicate data", "Avoiding primary keys"], "answer": 0, "answer_text": "Creating indexes", "topic": "Performance · Indexing", "explanation": "Indexes drastically accelerate SELECT queries by providing balanced B-Tree structures that eliminate full table scans on filtered and joined columns.", "category": "Indexes & Performance Optimization"}, {"id": 43, "question": "Which indexing technique is commonly used in databases?", "options": ["Hash Indexing", "B-Tree Indexing", "Inverted Indexing", "Sequential Indexing"], "answer": 1, "answer_text": "B-Tree Indexing", "topic": "Indexes · Structures", "explanation": "B-Tree (Balanced Tree) indexing is the standard, most ubiquitous indexing structure used in relational databases due to its balanced O(log N) lookup, insertion, and deletion.", "category": "Indexes & Performance Optimization"}, {"id": 44, "question": "Which SQL command is used to remove a table?", "options": ["DELETE", "DROP", "TRUNCATE", "REMOVE"], "answer": 1, "answer_text": "DROP", "topic": "Commands · DDL", "explanation": "The DROP command completely destroys a database object (such as a table, view, or database) along with its metadata, schema, and all stored data.", "category": "DDL, DML & TCL Commands"}, {"id": 45, "question": "Which SQL function retrieves the current system date?", "options": ["GETDATE()", "CURDATE()", "NOW()", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Functions · Date & Time", "explanation": "Functions such as CURRENT_DATE(), NOW(), and SYSDATE() all retrieve the system date and time depending on the database engine, making 'All of the above' correct.", "category": "Aggregate & Scalar Functions"}, {"id": 46, "question": "Which clause is used to filter results?", "options": ["WHERE", "HAVING", "ORDER BY", "GROUP BY"], "answer": 0, "answer_text": "WHERE", "topic": "Clauses · Filtering", "explanation": "The WHERE clause filters individual rows before any grouping or aggregation takes place based on specified conditional predicates.", "category": "Clauses, Filtering & Sorting"}, {"id": 47, "question": "Which SQL keyword removes duplicates from query results?", "options": ["UNIQUE", "DISTINCT", "REMOVE", "DELETE"], "answer": 1, "answer_text": "DISTINCT", "topic": "Clauses · Deduplication", "explanation": "The DISTINCT keyword eliminates redundant duplicate rows from the final query result set, returning only unique value combinations.", "category": "Clauses, Filtering & Sorting"}, {"id": 48, "question": "Which SQL clause is used for grouping records?", "options": ["GROUP BY", "ORDER BY", "WHERE", "HAVING"], "answer": 0, "answer_text": "GROUP BY", "topic": "Clauses · Grouping", "explanation": "GROUP BY collapses multiple rows sharing identical values in specified columns into summary rows, enabling aggregate functions (COUNT, SUM, AVG) per group.", "category": "Clauses, Filtering & Sorting"}, {"id": 49, "question": "Which SQL clause filters grouped records?", "options": ["WHERE", "HAVING", "GROUP BY", "ORDER BY"], "answer": 1, "answer_text": "HAVING", "topic": "Clauses · Filtering", "explanation": "HAVING filters groups of rows produced by a GROUP BY clause based on aggregate conditions (e.g., HAVING COUNT(*) > 5), whereas WHERE filters individual rows.", "category": "Clauses, Filtering & Sorting"}, {"id": 50, "question": "Which SQL function converts text to lowercase?", "options": ["LOWER()", "LCASE()", "TO_LOWER()", "TEXTLOWER()"], "answer": 0, "answer_text": "LOWER()", "topic": "Functions · String", "explanation": "LOWER() (or LCASE()) converts all alphabetic characters in a string to lowercase format.", "category": "Aggregate & Scalar Functions"}, {"id": 51, "question": "Which SQL function returns the length of a string?", "options": ["LENGTH()", "SIZE()", "COUNT()", "TEXTLEN()"], "answer": 0, "answer_text": "LENGTH()", "topic": "Functions · String", "explanation": "LENGTH() returns the length of a string in characters or bytes depending on the SQL dialect (e.g., LEN() in T-SQL, LENGTH() in MySQL/PostgreSQL).", "category": "Aggregate & Scalar Functions"}, {"id": 52, "question": "Which SQL clause sorts the result in descending order?", "options": ["ORDER BY ASC", "ORDER BY DESC", "SORT DESC", "DESCENDING"], "answer": 1, "answer_text": "ORDER BY DESC", "topic": "Clauses · Sorting", "explanation": "The ORDER BY clause sorts query results; appending the DESC keyword arranges rows in descending order (highest to lowest).", "category": "Clauses, Filtering & Sorting"}, {"id": 53, "question": "Which of the following constraints ensures that each row in a table is unique?", "options": ["PRIMARY KEY", "FOREIGN KEY", "UNIQUE", "CHECK"], "answer": 0, "answer_text": "PRIMARY KEY", "topic": "Constraints · Keys", "explanation": "A PRIMARY KEY uniquely identifies each record in a table, combining UNIQUE and NOT NULL constraints. Each table can have at most one primary key.", "category": "Keys, Constraints & Data Types"}, {"id": 54, "question": "Which function returns the first non-null value in a list?", "options": ["IFNULL()", "COALESCE()", "NULLIF()", "NVL()"], "answer": 1, "answer_text": "COALESCE()", "topic": "Functions · Conditional", "explanation": "COALESCE(val1, val2, ...) evaluates its arguments in order and returns the first non-null value encountered, or NULL if all arguments are null.", "category": "Aggregate & Scalar Functions"}, {"id": 55, "question": "Which function rounds a number to the nearest integer?", "options": ["FLOOR()", "ROUND()", "CEIL()", "TRUNC()"], "answer": 1, "answer_text": "ROUND()", "topic": "Functions · Numeric", "explanation": "ROUND(num, [decimals]) rounds a numeric expression to the nearest integer or to the specified number of decimal places.", "category": "Aggregate & Scalar Functions"}, {"id": 56, "question": "What will LENGTH('SQL') return?", "options": ["2", "3", "4", "Error"], "answer": 1, "answer_text": "3", "topic": "Functions · String", "explanation": "LENGTH('SQL') counts the characters in the literal string 'SQL', which contains exactly 3 characters.", "category": "Aggregate & Scalar Functions"}, {"id": 57, "question": "Which function extracts a substring from a string?", "options": ["MID()", "SUBSTRING()", "PART()", "SLICE()"], "answer": 1, "answer_text": "SUBSTRING()", "topic": "Functions · String", "explanation": "SUBSTRING(str, start, len) extracts a portion of a string beginning at a specified index for a specified number of characters.", "category": "Aggregate & Scalar Functions"}, {"id": 58, "question": "What will UPPER('sql') return?", "options": ["sql", "SQL", "SqL", "Error"], "answer": 1, "answer_text": "SQL", "topic": "Functions · String", "explanation": "UPPER('sql') converts all lowercase letters in 'sql' to uppercase, producing 'SQL'.", "category": "Aggregate & Scalar Functions"}, {"id": 59, "question": "Which constraint prevents duplicate values in a column?", "options": ["PRIMARY KEY", "UNIQUE", "FOREIGN KEY", "CHECK"], "answer": 1, "answer_text": "UNIQUE", "topic": "Constraints · Integrity", "explanation": "The UNIQUE constraint ensures that no two rows can have the same non-null value in the constrained column.", "category": "Keys, Constraints & Data Types"}, {"id": 60, "question": "Which constraint ensures that a column cannot have NULL values?", "options": ["UNIQUE", "CHECK", "NOT NULL", "FOREIGN KEY"], "answer": 2, "answer_text": "NOT NULL", "topic": "Constraints · Integrity", "explanation": "The NOT NULL constraint guarantees that every record in the table has a concrete value in that column, rejecting NULL inputs.", "category": "Keys, Constraints & Data Types"}, {"id": 61, "question": "Which constraint is used to enforce a relationship between two tables?", "options": ["FOREIGN KEY", "PRIMARY KEY", "UNIQUE", "CHECK"], "answer": 0, "answer_text": "FOREIGN KEY", "topic": "Constraints · Referential", "explanation": "A FOREIGN KEY creates a linked constraint between a child column and a parent table's primary key to preserve referential integrity.", "category": "Keys, Constraints & Data Types"}, {"id": 62, "question": "What is the default behavior of the ON DELETE clause for a FOREIGN KEY constraint?", "options": ["NO ACTION", "CASCADE", "SET NULL", "RESTRICT"], "answer": 0, "answer_text": "NO ACTION", "topic": "Constraints · Referential", "explanation": "When no ON DELETE action is specified, relational databases default to NO ACTION (or RESTRICT), which rejects deletions of parent rows that have referencing child rows.", "category": "Keys, Constraints & Data Types"}, {"id": 63, "question": "What is a view in SQL?", "options": ["A virtual table", "A stored procedure", "A temporary table", "An index"], "answer": 0, "answer_text": "A virtual table", "topic": "Views · Overview", "explanation": "A view is a virtual table containing no physical data of its own; it dynamically runs a saved SELECT statement whenever it is queried.", "category": "Views, Subqueries & CTEs"}, {"id": 64, "question": "Can a view be updated in SQL?", "options": ["Yes, always", "No, never", "Yes, if it contains a single base table", "Only if it has an ORDER BY clause"], "answer": 2, "answer_text": "Yes, if it contains a single base table", "topic": "Views · Updatability", "explanation": "Views can be updated directly via INSERT/UPDATE/DELETE if they reference a single base table without aggregate functions, DISTINCT, or GROUP BY.", "category": "Views, Subqueries & CTEs"}, {"id": 65, "question": "Which statement is used to delete a view?", "options": ["DROP VIEW", "DELETE VIEW", "REMOVE VIEW", "ALTER VIEW"], "answer": 0, "answer_text": "DROP VIEW", "topic": "Views · DDL", "explanation": "The DROP VIEW statement permanently removes the definition of a view from the database schema without touching data in underlying tables.", "category": "Views, Subqueries & CTEs"}, {"id": 66, "question": "Where can a subquery be used?", "options": ["In a SELECT statement", "In a WHERE clause", "In a FROM clause", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Subqueries · Placement", "explanation": "Subqueries are versatile and can be placed in SELECT (scalar projection), FROM (derived tables), WHERE (filtering), and HAVING clauses.", "category": "Views, Subqueries & CTEs"}, {"id": 67, "question": "Which subquery returns only one value?", "options": ["Single-row subquery", "Multi-row subquery", "Correlated subquery", "Scalar subquery"], "answer": 0, "answer_text": "Single-row subquery", "topic": "Subqueries · Types", "explanation": "A single-row subquery returns at most one row with one column, allowing it to be compared with scalar operators (=, <, >, <=, >=).", "category": "Views, Subqueries & CTEs"}, {"id": 68, "question": "What is the main purpose of an index?", "options": ["To store data permanently", "To speed up query execution", "To sort data automatically", "To remove duplicate values"], "answer": 1, "answer_text": "To speed up query execution", "topic": "Indexes · Optimization", "explanation": "The fundamental purpose of an index is to expedite data retrieval by reducing the number of disk I/O operations required to locate target records.", "category": "Indexes & Performance Optimization"}, {"id": 69, "question": "Which type of index does MySQL create for a PRIMARY KEY?", "options": ["Clustered index", "Non-clustered index", "Hash index", "Composite index"], "answer": 0, "answer_text": "Clustered index", "topic": "Indexes · Types", "explanation": "In MySQL InnoDB, the primary key is automatically implemented as a clustered index, where table rows are physically organized in primary key order.", "category": "Indexes & Performance Optimization"}, {"id": 70, "question": "Which command creates an index?", "options": ["CREATE INDEX", "ADD INDEX", "CREATE CONSTRAINT", "ALTER INDEX"], "answer": 0, "answer_text": "CREATE INDEX", "topic": "Indexes · DDL", "explanation": "The CREATE INDEX statement generates a secondary or specialized index on one or more columns of an existing table.", "category": "Indexes & Performance Optimization"}, {"id": 71, "question": "What is a stored procedure?", "options": ["A compiled SQL query", "A SQL function", "A virtual table", "A database trigger"], "answer": 0, "answer_text": "A compiled SQL query", "topic": "Procedures · Overview", "explanation": "A stored procedure is a precompiled set of SQL statements stored directly in the database engine, offering modularity and performance benefits.", "category": "Stored Procedures & Triggers"}, {"id": 72, "question": "Which SQL command executes a stored procedure?", "options": ["RUN", "CALL", "EXECUTE", "Both b and c"], "answer": 3, "answer_text": "Both b and c", "topic": "Procedures · Execution", "explanation": "Stored procedures can be invoked using CALL in MySQL/PostgreSQL or EXEC/EXECUTE in SQL Server, making 'Both b and c' correct.", "category": "Stored Procedures & Triggers"}, {"id": 73, "question": "When does an AFTER DELETE trigger execute?", "options": ["Before the delete operation", "After the delete operation", "Instead of the delete operation", "None of the above"], "answer": 1, "answer_text": "After the delete operation", "topic": "Triggers · Execution", "explanation": "An AFTER DELETE trigger fires immediately after the database engine completes the deletion of records from the target table.", "category": "Stored Procedures & Triggers"}, {"id": 74, "question": "What is the purpose of an INSTEAD OF trigger?", "options": ["Executes after an action", "Prevents an action and runs alternative logic", "Runs before the action", "Deletes rows in a table"], "answer": 1, "answer_text": "Prevents an action and runs alternative logic", "topic": "Triggers · INSTEAD OF", "explanation": "An INSTEAD OF trigger overrides the triggering DML statement and executes custom procedural code instead, commonly used to make complex views updatable.", "category": "Stored Procedures & Triggers"}, {"id": 75, "question": "What does the COMMIT statement do?", "options": ["Saves all changes permanently", "Cancels the last transaction", "Starts a new transaction", "Deletes data"], "answer": 0, "answer_text": "Saves all changes permanently", "topic": "Commands · TCL", "explanation": "The COMMIT statement makes all transactional modifications permanent in the database log and tables, concluding the active transaction.", "category": "DDL, DML & TCL Commands"}, {"id": 76, "question": "Which TCL command restores a transaction to a previous savepoint?", "options": ["COMMIT", "ROLLBACK", "SAVEPOINT", "DELETE"], "answer": 1, "answer_text": "ROLLBACK", "topic": "Commands · TCL", "explanation": "ROLLBACK TO <savepoint> rolls back the active transaction's operations to the specified savepoint without terminating the overall transaction.", "category": "DDL, DML & TCL Commands"}, {"id": 77, "question": "What happens if a transaction is not committed?", "options": ["Changes are saved permanently", "Changes are lost after the session ends", "The database crashes", "The table gets locked"], "answer": 1, "answer_text": "Changes are lost after the session ends", "topic": "Transactions · ACID", "explanation": "In a transactional database, if a session terminates or crashes without issuing COMMIT, all uncommitted changes are rolled back and lost.", "category": "Transactions & ACID Properties"}, {"id": 78, "question": "Which data type is used to store large amounts of text in MySQL?", "options": ["VARCHAR", "TEXT", "CHAR", "STRING"], "answer": 1, "answer_text": "TEXT", "topic": "Data Types · Text", "explanation": "The TEXT data type (TINYTEXT, TEXT, MEDIUMTEXT, LONGTEXT) is designed in MySQL to store large blocks of string and character data exceeding VARCHAR limits.", "category": "Keys, Constraints & Data Types"}, {"id": 79, "question": "What is the maximum length of a VARCHAR column in MySQL?", "options": ["255", "512", "1024", "65,535"], "answer": 3, "answer_text": "65,535", "topic": "Data Types · Limits", "explanation": "In MySQL, the maximum effective row size limit caps VARCHAR at 65,535 bytes (shared across all columns in the row, minus overhead).", "category": "Keys, Constraints & Data Types"}, {"id": 80, "question": "Which data type is best for storing dates in SQL?", "options": ["DATETIME", "TIMESTAMP", "DATE", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Data Types · Temporal", "explanation": "SQL engines support dedicated temporal types including DATE (date only), DATETIME (date and time), and TIMESTAMP (timezone-aware datetime).", "category": "Keys, Constraints & Data Types"}, {"id": 81, "question": "Which SQL function calculates the number of rows in a table?", "options": ["SUM()", "COUNT()", "AVG()", "MAX()"], "answer": 1, "answer_text": "COUNT()", "topic": "Functions · Aggregates", "explanation": "COUNT() calculates the number of rows matching the query criteria. COUNT(*) counts all rows, while COUNT(col) counts non-null values in that column.", "category": "Aggregate & Scalar Functions"}, {"id": 82, "question": "What will SELECT AVG(salary) FROM employees; return?", "options": ["The total salary", "The highest salary", "The average salary", "The number of employees"], "answer": 2, "answer_text": "The average salary", "topic": "Functions · Aggregates", "explanation": "SELECT AVG(salary) FROM employees; computes the arithmetic average (sum divided by count) of salary values for all employees with non-null salaries.", "category": "Aggregate & Scalar Functions"}, {"id": 83, "question": "What does the GROUP BY clause do in SQL?", "options": ["Sorts the result set", "Filters rows", "Groups rows with similar values", "Joins two tables"], "answer": 2, "answer_text": "Groups rows with similar values", "topic": "Clauses · Grouping", "explanation": "GROUP BY aggregates rows with identical values in specified columns into discrete groups, allowing summary metrics to be computed per group.", "category": "Clauses, Filtering & Sorting"}, {"id": 84, "question": "What is the purpose of a window function in SQL?", "options": ["Perform calculations across a set of table rows", "Modify table schema", "Filter rows", "Optimize indexes"], "answer": 0, "answer_text": "Perform calculations across a set of table rows", "topic": "Functions · Window Functions", "explanation": "Window functions execute calculations across a set of table rows related to the current row while preserving the individual identity of each row.", "category": "Aggregate & Scalar Functions"}, {"id": 85, "question": "What does the RANK() function do?", "options": ["Assigns a unique rank to each row", "Returns the highest value", "Counts the number of rows", "Finds the average"], "answer": 0, "answer_text": "Assigns a unique rank to each row", "topic": "Functions · Window Functions", "explanation": "RANK() assigns an ordinal rank to each row based on an ordering, with identical values receiving the same rank and subsequent ranks being skipped.", "category": "Aggregate & Scalar Functions"}, {"id": 86, "question": "What is the difference between RANK() and DENSE_RANK()?", "options": ["RANK() skips numbers after duplicates; DENSE_RANK() does not", "DENSE_RANK() assigns unique ranks only", "RANK() assigns ranks randomly", "Both behave the same"], "answer": 0, "answer_text": "RANK() skips numbers after duplicates; DENSE_RANK() does not", "topic": "Functions · Window Functions", "explanation": "RANK() leaves gaps in sequence following duplicate ties (e.g., 1, 2, 2, 4), whereas DENSE_RANK() assigns consecutive numbers without gaps (1, 2, 2, 3).", "category": "Aggregate & Scalar Functions"}, {"id": 87, "question": "What is the difference between UNION and UNION ALL?", "options": ["UNION removes duplicates; UNION ALL does not", "UNION ALL removes duplicates; UNION does not", "Both remove duplicates", "Neither removes duplicates"], "answer": 0, "answer_text": "UNION removes duplicates; UNION ALL does not", "topic": "Set Operations · UNION", "explanation": "UNION combines result sets and performs deduplication, whereas UNION ALL retains all rows from all input sets without filtering duplicates, making it faster.", "category": "Joins & Set Operations"}, {"id": 88, "question": "Which condition must be met to use UNION?", "options": ["Both queries must return the same number of columns", "Column names must be identical", "Tables must have the same primary key", "The first table must be empty"], "answer": 0, "answer_text": "Both queries must return the same number of columns", "topic": "Set Operations · Rules", "explanation": "Set operations (UNION, INTERSECT, EXCEPT) require that both SELECT queries have the exact same number of columns in compatible data types.", "category": "Joins & Set Operations"}, {"id": 89, "question": "What is the purpose of database normalization?", "options": ["Reduce redundancy", "Improve query performance", "Enforce relationships", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Normalization · Goals", "explanation": "Database normalization minimizes redundant data, enhances data integrity, and prevents insertion, update, and deletion anomalies across the schema.", "category": "Database Design & Normalization"}, {"id": 90, "question": "In which normal form are all repeating groups removed?", "options": ["1NF", "2NF", "3NF", "BCNF"], "answer": 0, "answer_text": "1NF", "topic": "Normalization · 1NF", "explanation": "First Normal Form (1NF) mandates that table attributes contain atomic (indivisible) values and eliminates repeating groups or array-like collections.", "category": "Database Design & Normalization"}, {"id": 91, "question": "What is the key requirement for a table to be in 2NF?", "options": ["It must be in 1NF", "It must have a primary key", "It must have no partial dependencies", "Both a and c"], "answer": 3, "answer_text": "Both a and c", "topic": "Normalization · 2NF", "explanation": "A table is in 2NF if it is already in 1NF and contains no partial dependencies, meaning every non-prime attribute fully depends on the entire primary key.", "category": "Database Design & Normalization"}, {"id": 92, "question": "Which command analyzes query execution performance?", "options": ["EXPLAIN", "ANALYZE", "PROFILE", "DEBUG"], "answer": 0, "answer_text": "EXPLAIN", "topic": "Performance · Execution Plans", "explanation": "The EXPLAIN (or EXPLAIN PLAN) command displays the query execution plan generated by the optimizer, showing index usage, join methods, and estimated costs.", "category": "Indexes & Performance Optimization"}, {"id": 93, "question": "What improves SQL query performance the most?", "options": ["Using indexes", "Using SELECT *", "Avoiding WHERE clauses", "Using large data sets"], "answer": 0, "answer_text": "Using indexes", "topic": "Performance · Indexing", "explanation": "Adding appropriate indexes on frequently queried, joined, and filtered columns is the most effective optimization for reducing disk scans and query latency.", "category": "Indexes & Performance Optimization"}, {"id": 94, "question": "Which SQL command restricts user access to specific tables?", "options": ["GRANT", "REVOKE", "DENY", "DROP"], "answer": 0, "answer_text": "GRANT", "topic": "Commands · DCL", "explanation": "GRANT is a Data Control Language (DCL) command used by administrators to grant privileges and access permissions on database objects to users and roles.", "category": "DDL, DML & TCL Commands"}, {"id": 95, "question": "Which SQL clause helps prevent SQL injection?", "options": ["WHERE", "LIMIT", "PREPARE", "ORDER BY"], "answer": 2, "answer_text": "PREPARE", "topic": "Security · Injection", "explanation": "Prepared statements (using PREPARE / parameterized queries) separate SQL code from user-supplied parameters, preventing malicious SQL injection attacks.", "category": "Indexes & Performance Optimization"}, {"id": 96, "question": "What is the purpose of a primary key?", "options": ["Uniquely identifies a row", "Stores duplicate values", "Enforces relationships", "Both a and c"], "answer": 3, "answer_text": "Both a and c", "topic": "Constraints · Keys", "explanation": "A PRIMARY KEY uniquely identifies each row in a table and automatically prohibits NULL values, combining both uniqueness and non-null properties.", "category": "Keys, Constraints & Data Types"}, {"id": 97, "question": "What does the FOREIGN KEY constraint do?", "options": ["Ensures referential integrity", "Creates a new table", "Defines a unique constraint", "Drops a table"], "answer": 0, "answer_text": "Ensures referential integrity", "topic": "Constraints · Referential", "explanation": "FOREIGN KEY constraints guarantee referential integrity by ensuring that values in the child column correspond to existing keys in the referenced parent table.", "category": "Keys, Constraints & Data Types"}, {"id": 98, "question": "What does the CASE statement do?", "options": ["Evaluates conditions and returns values", "Filters rows", "Groups results", "Defines a function"], "answer": 0, "answer_text": "Evaluates conditions and returns values", "topic": "Expressions · Conditional", "explanation": "The CASE statement provides conditional logic (IF-THEN-ELSE semantics) within SQL queries to evaluate expressions and return specific values.", "category": "Clauses, Filtering & Sorting"}, {"id": 99, "question": "What happens when the DELETE command is used without a WHERE clause?", "options": ["Deletes the first row only", "Deletes all rows", "Deletes the last row only", "Returns an error"], "answer": 1, "answer_text": "Deletes all rows", "topic": "Commands · DML", "explanation": "Executing DELETE without a WHERE clause removes all rows from the specified table one by one, while keeping the table structure intact.", "category": "DDL, DML & TCL Commands"}, {"id": 100, "question": "Which SQL command removes a table permanently?", "options": ["DELETE", "DROP", "TRUNCATE", "REMOVE"], "answer": 1, "answer_text": "DROP", "topic": "Commands · DDL", "explanation": "The DROP TABLE statement permanently deletes the table structure, metadata, indexes, and all stored rows from the database.", "category": "DDL, DML & TCL Commands"}, {"id": 101, "question": "Which SQL clause is used to filter records in a query?", "options": ["ORDER BY", "GROUP BY", "WHERE", "LIMIT"], "answer": 2, "answer_text": "WHERE", "topic": "Clauses · Filtering", "explanation": "The WHERE clause filters individual rows before grouping or aggregation based on boolean conditional predicates.", "category": "Clauses, Filtering & Sorting"}, {"id": 102, "question": "What does the DISTINCT keyword do in SQL?", "options": ["Filters NULL values", "Removes duplicate rows", "Groups records", "Sorts results"], "answer": 1, "answer_text": "Removes duplicate rows", "topic": "Clauses · Deduplication", "explanation": "The DISTINCT keyword instructs the database engine to remove duplicate rows from the final result set, keeping only unique records.", "category": "Clauses, Filtering & Sorting"}, {"id": 103, "question": "Which of the following is a DDL command?", "options": ["SELECT", "UPDATE", "ALTER", "DELETE"], "answer": 2, "answer_text": "ALTER", "topic": "Commands · DDL", "explanation": "ALTER is a DDL command used to modify the structure of an existing database object (e.g., adding/dropping columns, modifying data types).", "category": "DDL, DML & TCL Commands"}, {"id": 104, "question": "What does the HAVING clause do in SQL?", "options": ["Filters records before grouping", "Filters grouped records", "Joins tables", "Limits the number of rows"], "answer": 1, "answer_text": "Filters grouped records", "topic": "Clauses · Filtering", "explanation": "The HAVING clause applies filtering conditions to aggregated groups created by a GROUP BY clause, whereas WHERE applies to individual rows.", "category": "Clauses, Filtering & Sorting"}, {"id": 105, "question": "Which of the following is not a SQL keyword?", "options": ["INSERT", "CREATE", "MODIFY", "UPDATE"], "answer": 2, "answer_text": "MODIFY", "topic": "Syntax · Keywords", "explanation": "While ALTER, DROP, and SELECT are standard SQL keywords, MODIFY is an engine-specific clause argument (e.g. ALTER TABLE ... MODIFY COLUMN) rather than a standalone keyword.", "category": "Clauses, Filtering & Sorting"}, {"id": 106, "question": "What type of JOIN returns only matching records between two tables?", "options": ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"], "answer": 0, "answer_text": "INNER JOIN", "topic": "Joins · Inner Join", "explanation": "An INNER JOIN matches records between two tables based on a join condition and returns only rows where the condition evaluates to true in both tables.", "category": "Joins & Set Operations"}, {"id": 107, "question": "What happens if there is no match in a LEFT JOIN?", "options": ["The unmatched records are excluded", "NULL values are returned for missing columns", "The query fails", "Only the common records are returned"], "answer": 1, "answer_text": "NULL values are returned for missing columns", "topic": "Joins · Outer Join", "explanation": "In a LEFT JOIN, if a row from the left table has no matching counterpart in the right table, columns from the right table evaluate to NULL.", "category": "Joins & Set Operations"}, {"id": 108, "question": "Which JOIN includes all records from both tables?", "options": ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"], "answer": 3, "answer_text": "FULL OUTER JOIN", "topic": "Joins · Outer Join", "explanation": "A FULL OUTER JOIN retrieves all rows from both tables, populating missing values with NULL on either side when no match exists.", "category": "Joins & Set Operations"}, {"id": 109, "question": "What is the main requirement for performing a JOIN?", "options": ["Tables must have the same number of rows", "Tables must have at least one common column", "Tables must have primary keys", "Tables must be indexed"], "answer": 1, "answer_text": "Tables must have at least one common column", "topic": "Joins · Concepts", "explanation": "Joining tables requires at least one common related column (or logical expression) to establish a join condition between them.", "category": "Joins & Set Operations"}, {"id": 110, "question": "Which SQL clause is used to define join conditions?", "options": ["ON", "USING", "WHERE", "HAVING"], "answer": 0, "answer_text": "ON", "topic": "Joins · Syntax", "explanation": "The ON clause specifies the join predicate or matching condition that dictates how rows between joined tables correlate.", "category": "Joins & Set Operations"}, {"id": 111, "question": "Which constraint enforces a column to have unique values?", "options": ["CHECK", "UNIQUE", "NOT NULL", "FOREIGN KEY"], "answer": 1, "answer_text": "UNIQUE", "topic": "Constraints · Integrity", "explanation": "The UNIQUE constraint ensures that no two records contain identical values in the designated column, while permitting NULL entries.", "category": "Keys, Constraints & Data Types"}, {"id": 112, "question": "What does the FOREIGN KEY constraint enforce?", "options": ["Unique values in a column", "A relationship between two tables", "Non-null values", "Primary key assignment"], "answer": 1, "answer_text": "A relationship between two tables", "topic": "Constraints · Referential", "explanation": "A FOREIGN KEY enforces referential integrity between tables, ensuring that references from child records point to valid parent records.", "category": "Keys, Constraints & Data Types"}, {"id": 113, "question": "What will happen if an attempt is made to insert NULL into a NOT NULL column?", "options": ["The value is replaced with 0", "The row is inserted without that column", "An error is thrown", "The NULL value is stored"], "answer": 2, "answer_text": "An error is thrown", "topic": "Constraints · Integrity", "explanation": "Attempting to insert a NULL value into a column defined with a NOT NULL constraint violates the constraint and triggers a runtime database error.", "category": "Keys, Constraints & Data Types"}, {"id": 114, "question": "What is the main purpose of an index in SQL?", "options": ["Improve query performance", "Ensure unique values", "Remove duplicates", "Create relationships"], "answer": 0, "answer_text": "Improve query performance", "topic": "Performance · Indexing", "explanation": "The core purpose of creating an index is to optimize and accelerate data retrieval queries by replacing sequential scans with fast tree lookups.", "category": "Indexes & Performance Optimization"}, {"id": 115, "question": "Which type of index does MySQL create automatically for primary keys?", "options": ["Clustered index", "Non-clustered index", "Unique index", "Composite index"], "answer": 0, "answer_text": "Clustered index", "topic": "Indexes · Clustered", "explanation": "In MySQL (InnoDB engine), creating a PRIMARY KEY automatically creates a clustered index that defines the physical ordering of records on disk.", "category": "Indexes & Performance Optimization"}, {"id": 116, "question": "Can a table have multiple indexes?", "options": ["Yes", "No"], "answer": 0, "answer_text": "Yes", "topic": "Indexes · Capabilities", "explanation": "Yes, a table can have multiple indexes (one clustered index and multiple secondary/non-clustered indexes) to support different query patterns.", "category": "Indexes & Performance Optimization"}, {"id": 117, "question": "What does a COMMIT statement do?", "options": ["Ends a session", "Saves the current transaction", "Rolls back changes", "Deletes data permanently"], "answer": 1, "answer_text": "Saves the current transaction", "topic": "Commands · TCL", "explanation": "A COMMIT statement finalizes all database modifications executed within the current transaction, writing changes permanently to disk.", "category": "DDL, DML & TCL Commands"}, {"id": 118, "question": "Which SQL statement is used to undo a transaction?", "options": ["REVERT", "UNDO", "ROLLBACK", "DELETE"], "answer": 2, "answer_text": "ROLLBACK", "topic": "Commands · TCL", "explanation": "ROLLBACK cancels and undoes all modifications performed in the current uncommitted transaction, restoring data to its prior consistent state.", "category": "DDL, DML & TCL Commands"}, {"id": 119, "question": "What is a deadlock in SQL?", "options": ["A transaction that never ends", "A condition where two transactions wait on each other", "A syntax error", "A failed query"], "answer": 1, "answer_text": "A condition where two transactions wait on each other", "topic": "Transactions · Concurrency", "explanation": "A deadlock occurs when two or more transactions hold locks on resources the other needs, resulting in a circular wait state that neither can break.", "category": "Transactions & ACID Properties"}, {"id": 120, "question": "What is a SQL view?", "options": ["A virtual table based on a query", "A physical table", "A copy of another table", "A stored procedure"], "answer": 0, "answer_text": "A virtual table based on a query", "topic": "Views · Overview", "explanation": "A SQL view is a stored virtual table based on a SQL SELECT query; it contains no physical data of its own but dynamically retrieves records on demand.", "category": "Views, Subqueries & CTEs"}, {"id": 121, "question": "Can a SQL view contain aggregated data?", "options": ["Yes", "No"], "answer": 0, "answer_text": "Yes", "topic": "Views · Capabilities", "explanation": "Yes, views can incorporate aggregate functions (SUM, AVG, COUNT) and GROUP BY clauses to present pre-summarized data to users.", "category": "Views, Subqueries & CTEs"}, {"id": 122, "question": "What happens when you modify data in a view?", "options": ["Changes reflect in the base table", "The view creates a new table", "Nothing happens", "An error occurs"], "answer": 0, "answer_text": "Changes reflect in the base table", "topic": "Views · Updatability", "explanation": "When an updatable view is modified via INSERT, UPDATE, or DELETE, the changes are propagated directly to the underlying base table.", "category": "Views, Subqueries & CTEs"}, {"id": 123, "question": "Which SQL statement is used to create a stored procedure?", "options": ["CREATE FUNCTION", "CREATE PROCEDURE", "CREATE TRIGGER", "CREATE VIEW"], "answer": 1, "answer_text": "CREATE PROCEDURE", "topic": "Procedures · DDL", "explanation": "The CREATE PROCEDURE statement is the standard SQL DDL command used to create and compile a new stored procedure.", "category": "Stored Procedures & Triggers"}, {"id": 124, "question": "What is the main difference between a stored procedure and a function?", "options": ["A function must return a value", "A stored procedure executes queries", "A stored procedure cannot accept parameters", "A function cannot be used in SQL"], "answer": 0, "answer_text": "A function must return a value", "topic": "Procedures · Functions", "explanation": "A SQL user-defined function (UDF) is required to return a value and can be embedded in SELECT statements, whereas stored procedures do not have to return a value.", "category": "Stored Procedures & Triggers"}, {"id": 125, "question": "What does the PARTITION BY clause do in SQL?", "options": ["Divides results into groups", "Creates partitions in a database", "Sorts data", "Filters records"], "answer": 0, "answer_text": "Divides results into groups", "topic": "Functions · Window Functions", "explanation": "The PARTITION BY clause within an OVER() specification divides the query result set into independent partitions for window function calculations.", "category": "Aggregate & Scalar Functions"}, {"id": 126, "question": "What is the purpose of the WITH clause in SQL?", "options": ["Defines common table expressions (CTEs)", "Defines a stored procedure", "Joins tables", "Enforces security"], "answer": 0, "answer_text": "Defines common table expressions (CTEs)", "topic": "Queries · CTEs", "explanation": "The WITH clause defines a Common Table Expression (CTE), a temporary named result set that can be referenced multiple times within a query.", "category": "Views, Subqueries & CTEs"}, {"id": 127, "question": "What is a materialized view?", "options": ["A physically stored query result", "A standard SQL view", "A temporary table", "A stored procedure"], "answer": 0, "answer_text": "A physically stored query result", "topic": "Views · Materialized", "explanation": "A materialized view physically stores the query result on disk and must be periodically refreshed, providing fast read performance for heavy analytic queries.", "category": "Views, Subqueries & CTEs"}, {"id": 128, "question": "Which SQL clause is used to sort query results?", "options": ["GROUP BY", "SORT", "ORDER BY", "ARRANGE"], "answer": 2, "answer_text": "ORDER BY", "topic": "Clauses · Sorting", "explanation": "The ORDER BY clause sorts the query results in ascending (ASC, default) or descending (DESC) order based on specified column values.", "category": "Clauses, Filtering & Sorting"}, {"id": 129, "question": "What does the BETWEEN operator do in SQL?", "options": ["Filters values within a given range", "Joins two tables", "Checks for NULL values", "Finds duplicate values"], "answer": 0, "answer_text": "Filters values within a given range", "topic": "Operators · Range", "explanation": "The BETWEEN operator tests whether a value falls within an inclusive numerical, date, or alphabetical range (column >= min AND column <= max).", "category": "Clauses, Filtering & Sorting"}, {"id": 130, "question": "What will SELECT COUNT(*) FROM table_name; return?", "options": ["The number of columns in the table", "The number of rows in the table", "The sum of all numeric values", "The number of unique values"], "answer": 1, "answer_text": "The number of rows in the table", "topic": "Functions · Aggregates", "explanation": "SELECT COUNT(*) FROM table_name; returns the total count of rows present in the table, including rows with NULL attributes.", "category": "Aggregate & Scalar Functions"}, {"id": 131, "question": "What is the difference between UNION and UNION ALL?", "options": ["UNION removes duplicates, UNION ALL does not", "UNION ALL removes duplicates, UNION does not", "They are the same", "UNION can only be used for numeric data"], "answer": 0, "answer_text": "UNION removes duplicates, UNION ALL does not", "topic": "Set Operations · UNION", "explanation": "UNION merges result sets and eliminates duplicate rows, whereas UNION ALL merges result sets directly without deduplication overhead.", "category": "Joins & Set Operations"}, {"id": 132, "question": "What is required for UNION to work properly?", "options": ["The tables must have primary keys", "The number of columns and data types must match", "The columns must have the same names", "The tables must be indexed"], "answer": 1, "answer_text": "The number of columns and data types must match", "topic": "Set Operations · Rules", "explanation": "For UNION to execute successfully, all participating queries must return the same number of columns with compatible data types.", "category": "Joins & Set Operations"}, {"id": 133, "question": "What is a subquery in SQL?", "options": ["A query within another query", "A stored procedure", "A function", "A primary key constraint"], "answer": 0, "answer_text": "A query within another query", "topic": "Subqueries · Concepts", "explanation": "A subquery (or nested query) is an inner SELECT query embedded inside an outer SELECT, INSERT, UPDATE, or DELETE statement.", "category": "Views, Subqueries & CTEs"}, {"id": 134, "question": "Where can subqueries be used?", "options": ["SELECT", "WHERE", "FROM", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Subqueries · Placement", "explanation": "Subqueries can be embedded across multiple query clauses: SELECT (projections), FROM (derived tables), WHERE (filtering), and HAVING (grouped filtering).", "category": "Views, Subqueries & CTEs"}, {"id": 135, "question": "What is the difference between correlated and non-correlated subqueries?", "options": ["A correlated subquery depends on the outer query", "A non-correlated subquery runs independently", "Both a & b", "Neither"], "answer": 2, "answer_text": "Both a & b", "topic": "Subqueries · Correlation", "explanation": "A non-correlated subquery runs independently once, while a correlated subquery references columns from the outer query and re-evaluates for every outer row.", "category": "Views, Subqueries & CTEs"}, {"id": 136, "question": "What is a composite index?", "options": ["An index on multiple columns", "A primary key index", "An index only for foreign keys", "A temporary index"], "answer": 0, "answer_text": "An index on multiple columns", "topic": "Indexes · Types", "explanation": "A composite (or compound) index is an index created on two or more columns of a table to optimize queries filtering on that combination.", "category": "Indexes & Performance Optimization"}, {"id": 137, "question": "Which type of index is faster for retrieving sorted data?", "options": ["Clustered index", "Non-clustered index", "Foreign key index", "Unique index"], "answer": 0, "answer_text": "Clustered index", "topic": "Indexes · Clustered", "explanation": "A clustered index physically dictates the sequential order of table data on disk, making range scans and sorted ORDER BY queries exceptionally fast.", "category": "Indexes & Performance Optimization"}, {"id": 138, "question": "What is the main disadvantage of using too many indexes?", "options": ["It slows down INSERT, UPDATE, and DELETE operations", "It increases sorting speed", "It reduces data storage", "It improves query performance"], "answer": 0, "answer_text": "It slows down INSERT, UPDATE, and DELETE operations", "topic": "Performance · Trade-offs", "explanation": "While indexes accelerate SELECT queries, having too many indexes degrades write performance (INSERT, UPDATE, DELETE) because every index must be maintained on writes.", "category": "Indexes & Performance Optimization"}, {"id": 139, "question": "When does an AFTER INSERT trigger execute?", "options": ["Before a row is inserted", "After a row is inserted", "Instead of inserting a row", "Only when an error occurs"], "answer": 1, "answer_text": "After a row is inserted", "topic": "Triggers · Execution", "explanation": "An AFTER INSERT trigger fires immediately after a new record has been successfully inserted into the target table.", "category": "Stored Procedures & Triggers"}, {"id": 140, "question": "What is the purpose of an INSTEAD OF trigger?", "options": ["Replaces an operation with a custom action", "Deletes a table", "Updates all rows automatically", "Executes before any command"], "answer": 0, "answer_text": "Replaces an operation with a custom action", "topic": "Triggers · INSTEAD OF", "explanation": "An INSTEAD OF trigger intercepts and replaces the triggering DML statement, executing custom procedural logic in its place.", "category": "Stored Procedures & Triggers"}, {"id": 141, "question": "Can a trigger call another trigger?", "options": ["Yes", "No"], "answer": 0, "answer_text": "Yes", "topic": "Triggers · Nesting", "explanation": "Yes, in many databases (such as SQL Server and Oracle), triggers can initiate nested actions where modifying another table causes another trigger to fire.", "category": "Stored Procedures & Triggers"}, {"id": 142, "question": "What is an advantage of stored procedures?", "options": ["They improve performance by reducing network traffic", "They replace all SQL queries", "They remove the need for indexing", "They store tables in memory"], "answer": 0, "answer_text": "They improve performance by reducing network traffic", "topic": "Procedures · Advantages", "explanation": "Stored procedures execute on the database server, drastically reducing network round-trips by processing complex batch logic in a single server-side call.", "category": "Stored Procedures & Triggers"}, {"id": 143, "question": "Can stored procedures return values?", "options": ["Yes", "No"], "answer": 0, "answer_text": "Yes", "topic": "Procedures · Returns", "explanation": "Yes, stored procedures can return scalar status codes, output parameters, and full tabular result sets to the caller.", "category": "Stored Procedures & Triggers"}, {"id": 144, "question": "Which function is a window function in SQL?", "options": ["ROW_NUMBER()", "COUNT()", "SUM()", "MAX()"], "answer": 0, "answer_text": "ROW_NUMBER()", "topic": "Functions · Window Functions", "explanation": "ROW_NUMBER() is a window function that assigns a unique sequential rank to rows based on an OVER(ORDER BY ...) specification.", "category": "Aggregate & Scalar Functions"}, {"id": 145, "question": "What does the RANK() function do?", "options": ["Assigns a ranking to rows with gaps in ranking values", "Assigns a unique rank without gaps", "Assigns sequential numbers", "Finds the maximum value"], "answer": 0, "answer_text": "Assigns a ranking to rows with gaps in ranking values", "topic": "Functions · Window Functions", "explanation": "The RANK() window function assigns ranks based on order, creating gaps in subsequent rank values whenever tied duplicate rows occur.", "category": "Aggregate & Scalar Functions"}, {"id": 146, "question": "What does the SAVEPOINT command do?", "options": ["Saves a partial transaction", "Rolls back all changes", "Creates a temporary table", "Ensures atomicity"], "answer": 0, "answer_text": "Saves a partial transaction", "topic": "Commands · TCL", "explanation": "SAVEPOINT creates an intermediate named checkpoint in a transaction, allowing partial rollback via 'ROLLBACK TO SAVEPOINT' without losing prior work.", "category": "DDL, DML & TCL Commands"}, {"id": 147, "question": "What is an ACID property in SQL?", "options": ["A set of properties ensuring reliability of transactions", "A table constraint", "A type of indexing", "A function for data validation"], "answer": 0, "answer_text": "A set of properties ensuring reliability of transactions", "topic": "Transactions · ACID", "explanation": "ACID is an acronym representing the four foundational properties of reliable transactions: Atomicity, Consistency, Isolation, and Durability.", "category": "Transactions & ACID Properties"}, {"id": 148, "question": "Which SQL command permanently saves a transaction?", "options": ["COMMIT", "ROLLBACK", "SAVEPOINT", "DELETE"], "answer": 0, "answer_text": "COMMIT", "topic": "Commands · TCL", "explanation": "COMMIT is the TCL command that makes all database modifications within the current transaction permanent and irreversible.", "category": "DDL, DML & TCL Commands"}, {"id": 149, "question": "Which of the following is not a valid SQL data type?", "options": ["INTEGER", "VARCHAR", "BOOLEAN", "OBJECT"], "answer": 3, "answer_text": "OBJECT", "topic": "Data Types · Standards", "explanation": "Standard SQL supports INT, VARCHAR, DATE, and DECIMAL, but 'OBJECT' is not a standard primitive SQL data type.", "category": "Keys, Constraints & Data Types"}, {"id": 150, "question": "What does a FOREIGN KEY constraint do?", "options": ["Links one table to another", "Ensures unique values", "Prevents NULL values", "Enforces primary key rules"], "answer": 0, "answer_text": "Links one table to another", "topic": "Constraints · Referential", "explanation": "A FOREIGN KEY constraint establishes a relational link between two tables, ensuring child records reference valid parent records.", "category": "Keys, Constraints & Data Types"}, {"id": 151, "question": "Which SQL command is used to remove all records from a table but keep its structure?", "options": ["DELETE", "DROP", "TRUNCATE", "ALTER"], "answer": 2, "answer_text": "TRUNCATE", "topic": "Commands · DDL", "explanation": "TRUNCATE quickly wipes all data rows from a table while keeping the table definition, columns, constraints, and indexes intact.", "category": "DDL, DML & TCL Commands"}, {"id": 152, "question": "What does the VARCHAR(50) data type represent?", "options": ["A fixed-length string of 50 characters", "A variable-length string with a maximum of 50 characters", "A numerical field of size 50", "A character field limited to only uppercase values"], "answer": 1, "answer_text": "A variable-length string with a maximum of 50 characters", "topic": "Data Types · Strings", "explanation": "VARCHAR(50) allocates variable-length character storage that adjusts to string size, accommodating up to a maximum of 50 characters.", "category": "Keys, Constraints & Data Types"}, {"id": 153, "question": "What is the main difference between CHAR and VARCHAR data types?", "options": ["CHAR stores fixed-length strings, while VARCHAR stores variable-length strings", "CHAR allows only numbers, while VARCHAR allows text", "CHAR is case-sensitive, VARCHAR is not", "CHAR is for primary keys only"], "answer": 0, "answer_text": "CHAR stores fixed-length strings, while VARCHAR stores variable-length strings", "topic": "Data Types · Strings", "explanation": "CHAR stores fixed-length character strings padding with spaces up to its defined length, whereas VARCHAR stores variable-length strings with only necessary bytes.", "category": "Keys, Constraints & Data Types"}, {"id": 154, "question": "What does an INNER JOIN return?", "options": ["All rows from both tables", "Only the matching rows between the two tables", "All rows from the left table and matching rows from the right table", "All rows from the right table and matching rows from the left table"], "answer": 1, "answer_text": "Only the matching rows between the two tables", "topic": "Joins · Inner Join", "explanation": "An INNER JOIN matches rows between two tables and returns only records where the specified join condition is met in both tables.", "category": "Joins & Set Operations"}, {"id": 155, "question": "What is the difference between a LEFT JOIN and a RIGHT JOIN?", "options": ["LEFT JOIN returns unmatched rows from the left table, RIGHT JOIN returns unmatched rows from the right table", "LEFT JOIN removes NULL values, RIGHT JOIN keeps them", "RIGHT JOIN is faster than LEFT JOIN", "There is no difference"], "answer": 0, "answer_text": "LEFT JOIN returns unmatched rows from the left table, RIGHT JOIN returns unmatched rows from the right table", "topic": "Joins · Outer Join", "explanation": "A LEFT JOIN preserves all rows from the left table regardless of matches, while a RIGHT JOIN preserves all rows from the right table.", "category": "Joins & Set Operations"}, {"id": 156, "question": "Which constraint ensures a column has unique values but allows NULL values?", "options": ["PRIMARY KEY", "UNIQUE", "NOT NULL", "CHECK"], "answer": 1, "answer_text": "UNIQUE", "topic": "Constraints · Integrity", "explanation": "The UNIQUE constraint ensures distinct values across all non-null rows, but unlike PRIMARY KEY, it permits NULL values.", "category": "Keys, Constraints & Data Types"}, {"id": 157, "question": "What is the main purpose of a FOREIGN KEY constraint?", "options": ["Enforce data integrity by linking tables", "Define a unique column", "Speed up searches", "Store large objects"], "answer": 0, "answer_text": "Enforce data integrity by linking tables", "topic": "Constraints · Referential", "explanation": "The principal objective of a FOREIGN KEY constraint is to enforce referential integrity between associated tables.", "category": "Keys, Constraints & Data Types"}, {"id": 158, "question": "What is a view in SQL?", "options": ["A virtual table based on the result of a query", "A physical table stored in the database", "A stored procedure", "A data type"], "answer": 0, "answer_text": "A virtual table based on the result of a query", "topic": "Views · Overview", "explanation": "A view is a stored virtual table defined by a SQL SELECT query, presenting dynamically generated data without separate physical storage.", "category": "Views, Subqueries & CTEs"}, {"id": 159, "question": "Can a SQL view contain a WHERE clause?", "options": ["Yes", "No"], "answer": 0, "answer_text": "Yes", "topic": "Views · Capabilities", "explanation": "Yes, a view's defining SELECT query can include WHERE clauses to filter and restrict the specific subset of rows exposed to users.", "category": "Views, Subqueries & CTEs"}, {"id": 160, "question": "Which of the following is NOT true about subqueries?", "options": ["A subquery must always return one row", "A subquery can be used in WHERE, FROM, and SELECT clauses", "A subquery can return multiple rows", "A subquery can reference columns from an outer query"], "answer": 0, "answer_text": "A subquery must always return one row", "topic": "Subqueries · Characteristics", "explanation": "Subqueries are not required to return only one row; multi-row subqueries returning several rows can be used with operators like IN, ANY, and ALL.", "category": "Views, Subqueries & CTEs"}, {"id": 161, "question": "What does an index in SQL do?", "options": ["Speeds up query execution", "Adds constraints to a table", "Encrypts the data", "Creates new tables"], "answer": 0, "answer_text": "Speeds up query execution", "topic": "Performance · Indexing", "explanation": "An index creates an optimized search structure that allows the query engine to find rows quickly without inspecting every table row.", "category": "Indexes & Performance Optimization"}, {"id": 162, "question": "Which type of index is best for unique values?", "options": ["Clustered index", "Non-clustered index", "Unique index", "Composite index"], "answer": 2, "answer_text": "Unique index", "topic": "Indexes · Types", "explanation": "A Unique Index guarantees that all indexed column values remain unique while optimizing lookup performance for equality checks.", "category": "Indexes & Performance Optimization"}, {"id": 163, "question": "What type of SQL trigger is fired before an operation occurs?", "options": ["BEFORE trigger", "AFTER trigger", "INSTEAD OF trigger", "EXECUTE trigger"], "answer": 0, "answer_text": "BEFORE trigger", "topic": "Triggers · Types", "explanation": "A BEFORE trigger fires prior to the execution of the triggering INSERT, UPDATE, or DELETE operation, useful for validation and value transformation.", "category": "Stored Procedures & Triggers"}, {"id": 164, "question": "Can a trigger be used to enforce business rules?", "options": ["Yes", "No"], "answer": 0, "answer_text": "Yes", "topic": "Triggers · Capabilities", "explanation": "Yes, triggers can enforce complex business rules, validate domain requirements, and write audit trails that declarative constraints cannot handle.", "category": "Stored Procedures & Triggers"}, {"id": 165, "question": "What is a stored procedure in SQL?", "options": ["A precompiled SQL statement stored in the database", "A primary key", "A type of JOIN", "A database user role"], "answer": 0, "answer_text": "A precompiled SQL statement stored in the database", "topic": "Procedures · Overview", "explanation": "A stored procedure is a precompiled set of SQL statements stored inside the database catalog, ready for repeated parameterized execution.", "category": "Stored Procedures & Triggers"}, {"id": 166, "question": "Can a stored procedure return multiple values?", "options": ["Yes", "No"], "answer": 0, "answer_text": "Yes", "topic": "Procedures · Capabilities", "explanation": "Yes, stored procedures can return multiple values using OUT parameters or by generating multiple result sets.", "category": "Stored Procedures & Triggers"}, {"id": 167, "question": "What does the term \"rollback\" mean in SQL?", "options": ["Undo changes made in a transaction", "Permanently save data", "Delete a table", "Join two tables"], "answer": 0, "answer_text": "Undo changes made in a transaction", "topic": "Transactions · TCL", "explanation": "Rolling back an active transaction means undoing and discarding all uncommitted database modifications executed since the transaction started.", "category": "Transactions & ACID Properties"}, {"id": 168, "question": "Which SQL command begins a transaction?", "options": ["BEGIN TRANSACTION", "START TRANSACTION", "Both a & b", "ROLLBACK"], "answer": 2, "answer_text": "Both a & b", "topic": "Transactions · Syntax", "explanation": "Different database engines start a transaction using either 'BEGIN TRANSACTION' (SQL Server) or 'START TRANSACTION' (MySQL), making both valid.", "category": "Transactions & ACID Properties"}, {"id": 169, "question": "What is the purpose of the CASE statement in SQL?", "options": ["Perform conditional logic in queries", "Store case-sensitive values", "Encrypt column values", "Join multiple tables"], "answer": 0, "answer_text": "Perform conditional logic in queries", "topic": "Expressions · Conditional", "explanation": "The CASE expression allows conditional branching logic (IF-THEN-ELSE) within queries to return different output values based on predicates.", "category": "Clauses, Filtering & Sorting"}, {"id": 170, "question": "What is the default sorting order of ORDER BY in SQL?", "options": ["ASC (Ascending)", "DESC (Descending)"], "answer": 0, "answer_text": "ASC (Ascending)", "topic": "Clauses · Sorting", "explanation": "In standard SQL, if the sorting direction is omitted in an ORDER BY clause, the database defaults to ascending order (ASC).", "category": "Clauses, Filtering & Sorting"}, {"id": 171, "question": "Which SQL function returns the current date and time?", "options": ["NOW()", "SYSDATE()", "CURRENT_TIMESTAMP", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Functions · Date & Time", "explanation": "Functions such as NOW(), CURRENT_TIMESTAMP, and GETDATE() all return the current date and time in their respective SQL dialects.", "category": "Aggregate & Scalar Functions"}, {"id": 172, "question": "What is the main use of the COALESCE function in SQL?", "options": ["Replace NULL values with a specified value", "Concatenate strings", "Create indexes", "Sort data"], "answer": 0, "answer_text": "Replace NULL values with a specified value", "topic": "Functions · Conditional", "explanation": "The COALESCE() function returns the first non-null expression from its argument list, providing a standard way to handle fallback values for NULLs.", "category": "Aggregate & Scalar Functions"}, {"id": 173, "question": "Which SQL keyword is used to remove duplicate records from a result set?", "options": ["DISTINCT", "UNIQUE", "REMOVE", "DELETE"], "answer": 0, "answer_text": "DISTINCT", "topic": "Clauses · Deduplication", "explanation": "The DISTINCT keyword instructs the query engine to filter out duplicate rows from the projected result set, keeping only unique records.", "category": "Clauses, Filtering & Sorting"}, {"id": 174, "question": "What is the default value of an AUTO_INCREMENT column if no value is inserted?", "options": ["0", "NULL", "Next sequential number", "It must be manually assigned"], "answer": 2, "answer_text": "Next sequential number", "topic": "Data Types · Auto Increment", "explanation": "If no value is provided during INSERT into an AUTO_INCREMENT column, the database automatically assigns the next sequential integer.", "category": "Keys, Constraints & Data Types"}, {"id": 175, "question": "What is the difference between INT and DECIMAL data types?", "options": ["INT stores whole numbers, DECIMAL stores fixed-point numbers", "INT is faster than DECIMAL", "DECIMAL allows negative numbers, INT does not", "Both are identical"], "answer": 0, "answer_text": "INT stores whole numbers, DECIMAL stores fixed-point numbers", "topic": "Data Types · Numeric", "explanation": "INT stores discrete whole numbers without fractions, while DECIMAL stores exact fixed-point numbers with specified precision and scale.", "category": "Keys, Constraints & Data Types"}, {"id": 176, "question": "Which join type returns only unmatched rows from both tables?", "options": ["INNER JOIN", "FULL OUTER JOIN", "LEFT JOIN", "RIGHT JOIN"], "answer": 1, "answer_text": "FULL OUTER JOIN", "topic": "Joins · Outer Join", "explanation": "A FULL OUTER JOIN with WHERE conditions filtering out matching keys (or an outer join in general) surfaces unmatched records across both tables.", "category": "Joins & Set Operations"}, {"id": 177, "question": "How do you retrieve all records from TableA and only matching records from TableB?", "options": ["LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "CROSS JOIN"], "answer": 0, "answer_text": "LEFT JOIN", "topic": "Joins · Outer Join", "explanation": "A LEFT JOIN retrieves all rows from Table A (left table) and pairs them with matching records from Table B (right table), filling unmatched values with NULL.", "category": "Joins & Set Operations"}, {"id": 178, "question": "Which constraint ensures a column cannot contain NULL values?", "options": ["NOT NULL", "UNIQUE", "FOREIGN KEY", "CHECK"], "answer": 0, "answer_text": "NOT NULL", "topic": "Constraints · Integrity", "explanation": "The NOT NULL constraint guarantees that every record in the table contains a non-null value for that column.", "category": "Keys, Constraints & Data Types"}, {"id": 179, "question": "What happens if you try to insert a duplicate value in a PRIMARY KEY column?", "options": ["The value is ignored", "An error occurs", "The duplicate is inserted", "The value is stored with a warning"], "answer": 1, "answer_text": "An error occurs", "topic": "Constraints · Keys", "explanation": "Primary keys strictly enforce uniqueness; attempting to insert an already existing key value triggers a primary key constraint violation error.", "category": "Keys, Constraints & Data Types"}, {"id": 180, "question": "Can a view be updated if it contains an aggregate function?", "options": ["Yes", "No"], "answer": 1, "answer_text": "No", "topic": "Views · Updatability", "explanation": "No, views that include aggregate functions (SUM, COUNT, AVG) cannot be directly updated because there is no 1-to-1 mapping back to individual base table rows.", "category": "Views, Subqueries & CTEs"}, {"id": 181, "question": "What SQL command is used to remove a view?", "options": ["DELETE VIEW", "DROP VIEW", "REMOVE VIEW", "ALTER VIEW"], "answer": 1, "answer_text": "DROP VIEW", "topic": "Views · DDL", "explanation": "The DROP VIEW statement deletes the definition of a view from the database catalog without affecting the data stored in underlying base tables.", "category": "Views, Subqueries & CTEs"}, {"id": 182, "question": "Where can a subquery be placed in SQL?", "options": ["SELECT clause", "FROM clause", "WHERE clause", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Subqueries · Placement", "explanation": "Subqueries can appear in multiple SQL clauses including SELECT (scalar projections), FROM (derived tables), WHERE (filters), and HAVING.", "category": "Views, Subqueries & CTEs"}, {"id": 183, "question": "Which operator is commonly used with subqueries that return multiple values?", "options": ["=", "IN", "BETWEEN", "LIKE"], "answer": 1, "answer_text": "IN", "topic": "Subqueries · Operators", "explanation": "The IN operator is commonly paired with multi-row subqueries to test whether an outer value exists within the list of values returned by the subquery.", "category": "Views, Subqueries & CTEs"}, {"id": 184, "question": "Which type of index physically rearranges the data in the table?", "options": ["Clustered Index", "Non-Clustered Index", "Unique Index", "Composite Index"], "answer": 0, "answer_text": "Clustered Index", "topic": "Indexes · Clustered", "explanation": "A clustered index physically orders and stores the actual data rows of the table in sorted sequence based on the index key values.", "category": "Indexes & Performance Optimization"}, {"id": 185, "question": "What is the main advantage of indexing?", "options": ["Faster query execution", "Reduces storage space", "Makes updates faster", "Prevents NULL values"], "answer": 0, "answer_text": "Faster query execution", "topic": "Performance · Indexing", "explanation": "The primary benefit of indexing is significantly faster query execution, enabling index seeks instead of expensive full table scans.", "category": "Indexes & Performance Optimization"}, {"id": 186, "question": "What is the purpose of an INSTEAD OF trigger?", "options": ["To modify default SQL behavior", "To execute instead of the actual DML statement", "To speed up queries", "To enforce foreign key constraints"], "answer": 1, "answer_text": "To execute instead of the actual DML statement", "topic": "Triggers · INSTEAD OF", "explanation": "An INSTEAD OF trigger intercepts the triggering DML statement and executes custom user-defined SQL statements instead of the default action.", "category": "Stored Procedures & Triggers"}, {"id": 187, "question": "Can a trigger be applied to multiple tables at once?", "options": ["Yes", "No"], "answer": 1, "answer_text": "No", "topic": "Triggers · Rules", "explanation": "In relational databases, a trigger is bound directly to a single table or view; it cannot be attached across multiple tables simultaneously in a single definition.", "category": "Stored Procedures & Triggers"}, {"id": 188, "question": "Which SQL command is used to execute a stored procedure?", "options": ["EXEC", "RUN", "CALL", "Both a & c"], "answer": 3, "answer_text": "Both a & c", "topic": "Procedures · Execution", "explanation": "Stored procedures can be executed using EXEC / EXECUTE (in SQL Server/Oracle) or CALL (in MySQL/PostgreSQL), making both commands valid.", "category": "Stored Procedures & Triggers"}, {"id": 189, "question": "Can a stored procedure return a result set?", "options": ["Yes", "No"], "answer": 0, "answer_text": "Yes", "topic": "Procedures · Capabilities", "explanation": "Yes, stored procedures can execute SELECT queries and return one or more tabular result sets directly to the client application.", "category": "Stored Procedures & Triggers"}, {"id": 190, "question": "What does the COMMIT statement do?", "options": ["Rolls back the last transaction", "Saves all changes in the current transaction", "Deletes all records from a table", "Locks a table"], "answer": 1, "answer_text": "Saves all changes in the current transaction", "topic": "Commands · TCL", "explanation": "The COMMIT statement makes all changes made within the current transaction permanent and durable on disk.", "category": "DDL, DML & TCL Commands"}, {"id": 191, "question": "What is the purpose of the SAVEPOINT command?", "options": ["To create a temporary rollback point", "To delete data", "To lock a table", "To create an index"], "answer": 0, "answer_text": "To create a temporary rollback point", "topic": "Commands · TCL", "explanation": "A SAVEPOINT establishes a named temporary rollback marker within a transaction, allowing a granular undo without rolling back the whole transaction.", "category": "DDL, DML & TCL Commands"}, {"id": 192, "question": "Which SQL clause is used to limit the number of returned rows?", "options": ["LIMIT", "TOP", "FETCH", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Clauses · Limiting", "explanation": "Limiting result rows varies by dialect: LIMIT (MySQL/PostgreSQL), TOP (SQL Server), and ROWNUM / FETCH FIRST (Oracle), so 'All of the above' are valid.", "category": "Clauses, Filtering & Sorting"}, {"id": 193, "question": "How can you rename a column in SQL?", "options": ["RENAME COLUMN", "ALTER TABLE … RENAME COLUMN", "CHANGE COLUMN", "MODIFY COLUMN"], "answer": 1, "answer_text": "ALTER TABLE … RENAME COLUMN", "topic": "Commands · DDL", "explanation": "Standard SQL syntax for renaming an existing column uses 'ALTER TABLE table_name RENAME COLUMN old_name TO new_name;'.", "category": "DDL, DML & TCL Commands"}, {"id": 194, "question": "Which SQL function is used to return the length of a string?", "options": ["LENGTH()", "LEN()", "CHAR_LENGTH()", "All of the above"], "answer": 3, "answer_text": "All of the above", "topic": "Functions · String", "explanation": "Functions such as LENGTH(), LEN(), and CHAR_LENGTH() all measure string lengths across different database dialects, making 'All of the above' correct.", "category": "Aggregate & Scalar Functions"}, {"id": 195, "question": "Which statement is used to count the number of rows in a table?", "options": ["COUNT(*)", "COUNT(ALL)", "COUNT(ROWS)", "SUM(*)"], "answer": 0, "answer_text": "COUNT(*)", "topic": "Functions · Aggregates", "explanation": "COUNT(*) is the standard SQL aggregate statement used to count the total number of rows in a table, regardless of NULL column values.", "category": "Aggregate & Scalar Functions"}, {"id": 196, "question": "Which SQL clause is used for pattern matching?", "options": ["LIKE", "MATCH", "REGEX", "SEARCH"], "answer": 0, "answer_text": "LIKE", "topic": "Operators · Pattern Matching", "explanation": "The LIKE operator is used in WHERE clauses to search for specified string patterns using wildcard characters (% for multi-character, _ for single character).", "category": "Clauses, Filtering & Sorting"}, {"id": 197, "question": "What is the purpose of the GROUP_CONCAT function in MySQL?", "options": ["Concatenate column values into a single string", "Perform aggregate functions", "Count distinct values", "Split strings into multiple rows"], "answer": 0, "answer_text": "Concatenate column values into a single string", "topic": "Functions · Group Concatenation", "explanation": "In MySQL, GROUP_CONCAT() aggregates non-null column values from multiple grouped rows into a single comma-separated string.", "category": "Aggregate & Scalar Functions"}, {"id": 198, "question": "Which statement removes all rows from a table without logging individual row deletions?", "options": ["TRUNCATE", "DELETE", "DROP", "ALTER"], "answer": 0, "answer_text": "TRUNCATE", "topic": "Commands · DDL", "explanation": "TRUNCATE removes all rows from a table by deallocating data pages rather than logging individual row deletions, making it much faster than DELETE.", "category": "DDL, DML & TCL Commands"}, {"id": 199, "question": "What does the HAVING clause do in SQL?", "options": ["Filters grouped results", "Joins tables", "Sorts results", "Removes duplicates"], "answer": 0, "answer_text": "Filters grouped results", "topic": "Clauses · Filtering", "explanation": "The HAVING clause applies filtering conditions to grouped records produced by a GROUP BY clause, operating on aggregate values.", "category": "Clauses, Filtering & Sorting"}, {"id": 200, "question": "What is the purpose of the UNION operator?", "options": ["Combine result sets of two queries while removing duplicates", "Join two tables", "Sort data", "Create subqueries"], "answer": 0, "answer_text": "Combine result sets of two queries while removing duplicates", "topic": "Set Operations · UNION", "explanation": "The UNION operator combines the result sets of two or more SELECT queries into a single result set while automatically removing duplicate rows.", "category": "Joins & Set Operations"}];
+
+/* State Management */
+let state = {
+  activeQuestions: [],
+  currentIndex: 0,
+  answers: {},       // qIndex -> selected option index
+  marked: new Set(),  // Set of qIndexes marked
+  visited: new Set(), // Set of qIndexes visited
+  revealed: new Set(),// Set of qIndexes where explanation was opened
+  markingScheme: 'standard', // 'standard' (+1/0) or 'ccat' (+3/-1)
+  mode: 'master',     // 'master', 'mock', 'topic'
+  timerSec: 0,
+  timerInterval: null,
+  isCountdown: false,
+  countdownRemain: 0,
+  selectedTopic: null,
+  paletteFilter: 'all',
+  reviewFilter: 'all'
+};
+
+/* DOM Elements */
+const screens = {
+  start: document.getElementById('screen-start'),
+  test: document.getElementById('screen-test'),
+  result: document.getElementById('screen-result'),
+  review: document.getElementById('screen-review')
+};
+
+function showScreen(name) {
+  Object.keys(screens).forEach(k => {
+    screens[k].hidden = (k !== name);
+  });
+  window.scrollTo(0, 0);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* Theme Management */
+function initTheme() {
+  const saved = localStorage.getItem('sql_theme') || 'light';
+  if (saved === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('btn-theme-toggle').textContent = '☀️';
+  } else {
+    document.body.classList.remove('dark');
+    document.getElementById('btn-theme-toggle').textContent = '🌙';
+  }
+}
+document.getElementById('btn-theme-toggle').addEventListener('click', () => {
+  const isDark = document.body.classList.toggle('dark');
+  document.getElementById('btn-theme-toggle').textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('sql_theme', isDark ? 'dark' : 'light');
+});
+initTheme();
+
+/* Topic Grid Population */
+const topicCounts = {};
+QUESTION_BANK.forEach(q => {
+  topicCounts[q.category] = (topicCounts[q.category] || 0) + 1;
+});
+
+const topicGrid = document.getElementById('topic-grid');
+Object.keys(topicCounts).sort().forEach(cat => {
+  const card = document.createElement('div');
+  card.className = 'topic-card';
+  card.dataset.topic = cat;
+  card.innerHTML = `
+    <div>
+      <h4>${cat}</h4>
+    </div>
+    <span class="tc-count">${topicCounts[cat]} Qs</span>
+  `;
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.selectedTopic = cat;
+    document.getElementById('btn-start-topic').disabled = false;
+    document.getElementById('btn-start-topic').textContent = `▶ Practice ${cat} (${topicCounts[cat]} Qs)`;
+  });
+  topicGrid.appendChild(card);
+});
+
+/* Tabs on Start Screen */
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const mode = tab.dataset.mode;
+    document.getElementById('mode-panel-master').hidden = (mode !== 'master');
+    document.getElementById('mode-panel-mock').hidden = (mode !== 'mock');
+    document.getElementById('mode-panel-topic').hidden = (mode !== 'topic');
+  });
+});
+
+/* Shuffle Helper */
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+/* Start Test Handlers */
+document.getElementById('btn-start-master').addEventListener('click', () => {
+  const order = document.getElementById('master-order').value;
+  const timerOpt = document.getElementById('master-timer').value;
+  const marking = document.getElementById('master-marking').value;
+  
+  let list = [...QUESTION_BANK];
+  if (order === 'shuffle') {
+    list = shuffleArray(list);
+  }
+  startSession(list, 'master', marking, timerOpt, 'ALL 200 QUESTIONS');
+});
+
+document.getElementById('btn-start-mock').addEventListener('click', () => {
+  const count = parseInt(document.getElementById('mock-qcount').value, 10);
+  const duration = parseInt(document.getElementById('mock-duration').value, 10);
+  const marking = document.getElementById('mock-marking').value;
+  
+  const sampled = shuffleArray([...QUESTION_BANK]).slice(0, count);
+  startSession(sampled, 'mock', marking, String(duration), `MOCK EXAM · ${count} QUESTIONS`);
+});
+
+document.getElementById('btn-start-topic').addEventListener('click', () => {
+  if (!state.selectedTopic) return;
+  const qcountVal = document.getElementById('topic-qcount').value;
+  const timedVal = document.getElementById('topic-timed').value;
+  
+  let pool = QUESTION_BANK.filter(q => q.category === state.selectedTopic);
+  pool = shuffleArray(pool);
+  if (qcountVal !== 'all') {
+    const num = parseInt(qcountVal, 10);
+    pool = pool.slice(0, num);
+  }
+  const timerOpt = (timedVal === 'timed') ? String(pool.length) : 'untimed';
+  startSession(pool, 'topic', 'standard', timerOpt, state.selectedTopic.toUpperCase());
+});
+
+/* Session Initialization */
+function startSession(qList, mode, marking, timerConfig, badgeText) {
+  state.activeQuestions = qList;
+  state.currentIndex = 0;
+  state.answers = {};
+  state.marked = new Set();
+  state.visited = new Set([0]);
+  state.revealed = new Set();
+  state.markingScheme = marking;
+  state.mode = mode;
+  state.paletteFilter = 'all';
+
+  document.getElementById('topbar-badge').textContent = badgeText;
+  document.getElementById('jump-input').max = qList.length;
+
+  // Timer setup
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  if (timerConfig === 'untimed') {
+    state.isCountdown = false;
+    state.timerSec = 0;
+    document.getElementById('timer-chip').textContent = 'UNTIMED';
+  } else if (timerConfig === 'countup') {
+    state.isCountdown = false;
+    state.timerSec = 0;
+    startCountup();
+  } else {
+    state.isCountdown = true;
+    state.countdownRemain = parseInt(timerConfig, 10) * 60;
+    startCountdown();
+  }
+
+  renderPalette();
+  loadQuestion(0);
+  updateStats();
+  showScreen('test');
+}
+
+function startCountup() {
+  updateTimerDisplay(state.timerSec);
+  state.timerInterval = setInterval(() => {
+    state.timerSec++;
+    updateTimerDisplay(state.timerSec);
+  }, 1000);
+}
+
+function startCountdown() {
+  updateTimerDisplay(state.countdownRemain);
+  state.timerInterval = setInterval(() => {
+    state.countdownRemain--;
+    updateTimerDisplay(state.countdownRemain);
+    if (state.countdownRemain <= 300) {
+      document.getElementById('timer-chip').classList.add('low');
+    }
+    if (state.countdownRemain <= 0) {
+      clearInterval(state.timerInterval);
+      showToast('Time is up! Submitting practice test…');
+      finishTest();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  document.getElementById('timer-chip').textContent = 
+    `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+/* Load Question */
+function loadQuestion(idx) {
+  state.currentIndex = idx;
+  state.visited.add(idx);
+  
+  const q = state.activeQuestions[idx];
+  document.getElementById('q-no').textContent = `Question ${idx + 1} of ${state.activeQuestions.length}`;
+  document.getElementById('q-topic').textContent = q.topic;
+  document.getElementById('q-marks-chip').textContent = (state.markingScheme === 'ccat') ? '+3 / −1' : '+1 / 0';
+  document.getElementById('q-text').textContent = q.question;
+
+  // Render options
+  const optContainer = document.getElementById('q-options');
+  optContainer.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  const userChoice = state.answers[idx];
+  const isRevealed = state.revealed.has(idx);
+
+  q.options.forEach((optText, oIdx) => {
+    const optDiv = document.createElement('div');
+    optDiv.className = 'opt';
+    if (userChoice === oIdx) optDiv.classList.add('selected');
+    
+    if (isRevealed) {
+      if (oIdx === q.answer) optDiv.classList.add('correct');
+      if (userChoice === oIdx && userChoice !== q.answer) optDiv.classList.add('incorrect');
+    }
+
+    optDiv.innerHTML = `
+      <span class="ltr">${letters[oIdx]}</span>
+      <span>${optText}</span>
+    `;
+
+    optDiv.addEventListener('click', () => {
+      state.answers[idx] = oIdx;
+      loadQuestion(idx);
+      updateStats();
+      renderPalette();
+    });
+
+    optContainer.appendChild(optDiv);
+  });
+
+  // Explanation Panel
+  const explPanel = document.getElementById('expl-panel');
+  const explBtn = document.getElementById('btn-toggle-expl');
+  if (isRevealed) {
+    explPanel.hidden = false;
+    document.getElementById('expl-correct-text').textContent = `${letters[q.answer]}) ${q.options[q.answer]}`;
+    document.getElementById('expl-text').textContent = q.explanation;
+    explBtn.textContent = 'Hide Explanation';
+  } else {
+    explPanel.hidden = true;
+    explBtn.textContent = '💡 Show Answer & Explanation';
+  }
+
+  // Footer Buttons
+  document.getElementById('btn-prev').disabled = (idx === 0);
+  document.getElementById('btn-next').disabled = (idx === state.activeQuestions.length - 1);
+  
+  const isMarked = state.marked.has(idx);
+  const markBtn = document.getElementById('btn-mark');
+  markBtn.textContent = isMarked ? '✓ Marked for Review' : '🔖 Mark for Review';
+  markBtn.style.background = isMarked ? 'var(--sec-b)' : 'var(--sec-b-soft)';
+  markBtn.style.color = isMarked ? '#fff' : 'var(--sec-b)';
+
+  updateStats();
+  updatePaletteHighlight();
+}
+
+/* Show/Hide Explanation */
+document.getElementById('btn-toggle-expl').addEventListener('click', () => {
+  const idx = state.currentIndex;
+  if (state.revealed.has(idx)) {
+    state.revealed.delete(idx);
+  } else {
+    state.revealed.add(idx);
+  }
+  loadQuestion(idx);
+  updateStats();
+});
+
+/* Navigation Actions */
+document.getElementById('btn-prev').addEventListener('click', () => {
+  if (state.currentIndex > 0) loadQuestion(state.currentIndex - 1);
+});
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (state.currentIndex < state.activeQuestions.length - 1) loadQuestion(state.currentIndex + 1);
+});
+document.getElementById('btn-mark').addEventListener('click', () => {
+  const idx = state.currentIndex;
+  if (state.marked.has(idx)) {
+    state.marked.delete(idx);
+    showToast('Unmarked question');
+  } else {
+    state.marked.add(idx);
+    showToast('Question marked for review');
+  }
+  loadQuestion(idx);
+  renderPalette();
+});
+document.getElementById('btn-clear').addEventListener('click', () => {
+  const idx = state.currentIndex;
+  delete state.answers[idx];
+  showToast('Response cleared');
+  loadQuestion(idx);
+  renderPalette();
+});
+
+/* Jump input */
+document.getElementById('jump-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const val = parseInt(e.target.value, 10);
+    if (val >= 1 && val <= state.activeQuestions.length) {
+      loadQuestion(val - 1);
+      e.target.value = '';
+    } else {
+      showToast(`Enter a number between 1 and ${state.activeQuestions.length}`);
+    }
+  }
+});
+
+/* Keyboard Shortcuts */
+window.addEventListener('keydown', (e) => {
+  if (screens.test.hidden) return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+  const key = e.key.toUpperCase();
+  if (['1', '2', '3', '4'].includes(key)) {
+    const optIdx = parseInt(key, 10) - 1;
+    const q = state.activeQuestions[state.currentIndex];
+    if (optIdx < q.options.length) {
+      state.answers[state.currentIndex] = optIdx;
+      loadQuestion(state.currentIndex);
+      renderPalette();
+    }
+  } else if (['A', 'B', 'C', 'D'].includes(key)) {
+    const map = { A: 0, B: 1, C: 2, D: 3 };
+    const optIdx = map[key];
+    const q = state.activeQuestions[state.currentIndex];
+    if (optIdx < q.options.length) {
+      state.answers[state.currentIndex] = optIdx;
+      loadQuestion(state.currentIndex);
+      renderPalette();
+    }
+  } else if (e.key === 'ArrowRight' || key === 'N') {
+    if (state.currentIndex < state.activeQuestions.length - 1) loadQuestion(state.currentIndex + 1);
+  } else if (e.key === 'ArrowLeft' || key === 'P') {
+    if (state.currentIndex > 0) loadQuestion(state.currentIndex - 1);
+  } else if (key === 'M') {
+    document.getElementById('btn-mark').click();
+  } else if (key === 'E') {
+    document.getElementById('btn-toggle-expl').click();
+  }
+});
+
+/* Palette Rendering & Filtering */
+document.querySelectorAll('.pal-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.pal-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    state.paletteFilter = tab.dataset.filter;
+    renderPalette();
+  });
+});
+
+function renderPalette() {
+  const container = document.getElementById('palette');
+  container.innerHTML = '';
+  
+  state.activeQuestions.forEach((q, idx) => {
+    const isAnswered = state.answers.hasOwnProperty(idx);
+    const isMarked = state.marked.has(idx);
+    const isVisited = state.visited.has(idx);
+
+    // Apply filter
+    if (state.paletteFilter === 'unans' && isAnswered) return;
+    if (state.paletteFilter === 'marked' && !isMarked) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'p-btn';
+    btn.textContent = idx + 1;
+
+    // Status classes
+    if (isAnswered && isMarked) {
+      btn.classList.add('am');
+    } else if (isAnswered) {
+      btn.classList.add('an');
+    } else if (isMarked) {
+      btn.classList.add('mk');
+    } else if (isVisited) {
+      btn.classList.add('na');
+    } else {
+      btn.classList.add('nv');
+    }
+
+    if (idx === state.currentIndex) btn.classList.add('active');
+
+    btn.addEventListener('click', () => loadQuestion(idx));
+    container.appendChild(btn);
+  });
+}
+
+function updatePaletteHighlight() {
+  document.querySelectorAll('.p-btn').forEach(b => {
+    const num = parseInt(b.textContent, 10);
+    b.classList.toggle('active', num === state.currentIndex + 1);
+  });
+}
+
+/* Live Stats */
+function updateStats() {
+  const total = state.activeQuestions.length;
+  let ansCount = 0;
+  let correctCount = 0;
+  let wrongCount = 0;
+
+  state.activeQuestions.forEach((q, idx) => {
+    if (state.answers.hasOwnProperty(idx)) {
+      ansCount++;
+      if (state.answers[idx] === q.answer) correctCount++;
+      else wrongCount++;
+    }
+  });
+
+  const markedCount = state.marked.size;
+  const visitedCount = state.visited.size;
+  const notVisitedCount = total - visitedCount;
+  const notAnsweredCount = visitedCount - ansCount;
+
+  document.getElementById('stat-answered').textContent = ansCount;
+  document.getElementById('stat-notanswered').textContent = Math.max(0, notAnsweredCount);
+  document.getElementById('stat-marked').textContent = markedCount;
+  document.getElementById('stat-notvisited').textContent = Math.max(0, notVisitedCount);
+  document.getElementById('stat-progress-pct').textContent = `${Math.round((ansCount / total) * 100)}%`;
+
+  document.getElementById('stat-correct').textContent = correctCount;
+  document.getElementById('stat-incorrect').textContent = wrongCount;
+  const acc = ansCount > 0 ? Math.round((correctCount / ansCount) * 100) : 0;
+  document.getElementById('stat-accuracy').textContent = `${acc}%`;
+}
+
+/* Finish / Submit Test */
+document.getElementById('btn-finish-test').addEventListener('click', () => {
+  const total = state.activeQuestions.length;
+  const ansCount = Object.keys(state.answers).length;
+  const remaining = total - ansCount;
+
+  if (remaining > 0) {
+    document.getElementById('confirm-message').textContent = 
+      `You have answered ${ansCount} out of ${total} questions. ${remaining} questions are unattempted. Are you ready to submit and view your score?`;
+  } else {
+    document.getElementById('confirm-message').textContent = 
+      `All ${total} questions answered! Submit now to view your score and detailed performance breakdown?`;
+  }
+  document.getElementById('confirm-overlay').hidden = false;
+});
+
+document.getElementById('confirm-cancel').addEventListener('click', () => {
+  document.getElementById('confirm-overlay').hidden = true;
+});
+
+document.getElementById('confirm-ok').addEventListener('click', () => {
+  document.getElementById('confirm-overlay').hidden = true;
+  finishTest();
+});
+
+function finishTest() {
+  if (state.timerInterval) clearInterval(state.timerInterval);
+
+  let totalScore = 0;
+  let maxScore = 0;
+  let correctCount = 0;
+  let attemptedCount = 0;
+  const topicStats = {};
+
+  state.activeQuestions.forEach((q, idx) => {
+    const cat = q.category;
+    if (!topicStats[cat]) topicStats[cat] = { total: 0, correct: 0, attempted: 0 };
+    topicStats[cat].total++;
+
+    if (state.markingScheme === 'ccat') {
+      maxScore += 3;
+      if (state.answers.hasOwnProperty(idx)) {
+        attemptedCount++;
+        topicStats[cat].attempted++;
+        if (state.answers[idx] === q.answer) {
+          totalScore += 3;
+          correctCount++;
+          topicStats[cat].correct++;
+        } else {
+          totalScore -= 1;
+        }
+      }
+    } else {
+      maxScore += 1;
+      if (state.answers.hasOwnProperty(idx)) {
+        attemptedCount++;
+        topicStats[cat].attempted++;
+        if (state.answers[idx] === q.answer) {
+          totalScore += 1;
+          correctCount++;
+          topicStats[cat].correct++;
+        }
+      }
+    }
+  });
+
+  // Populate Result Screen
+  document.getElementById('res-score').textContent = totalScore;
+  document.getElementById('res-outof').textContent = ` / ${maxScore}`;
+  document.getElementById('res-attempted').textContent = `${attemptedCount} / ${state.activeQuestions.length}`;
+  document.getElementById('res-correct').textContent = correctCount;
+
+  const accuracy = attemptedCount > 0 ? Math.round((correctCount / attemptedCount) * 100) : 0;
+  document.getElementById('res-accuracy').textContent = `${accuracy}%`;
+
+  let elapsedSec = state.timerSec;
+  if (state.isCountdown) {
+    elapsedSec = (parseInt(document.getElementById('timer-chip').dataset.total || '0', 10) * 60) - state.countdownRemain;
+  }
+  const m = Math.floor(elapsedSec / 60);
+  const s = elapsedSec % 60;
+  document.getElementById('res-time').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+  // Verdict
+  const verdictEl = document.getElementById('res-verdict');
+  const pct = Math.round((totalScore / maxScore) * 100);
+  if (pct >= 80) {
+    verdictEl.className = 'verdict-chip high';
+    verdictEl.textContent = '🌟 Senior DB / SQL Master — Outstanding!';
+  } else if (pct >= 60) {
+    verdictEl.className = 'verdict-chip high';
+    verdictEl.textContent = '👍 Ready for SQL Interviews — Solid Performance!';
+  } else if (pct >= 40) {
+    verdictEl.className = 'verdict-chip mid';
+    verdictEl.textContent = '📖 Good Effort — Review Missed Topics Below';
+  } else {
+    verdictEl.className = 'verdict-chip low';
+    verdictEl.textContent = '⚠️ Needs More Practice — Revisit Core SQL Concepts';
+  }
+
+  // Topic breakdown
+  const topicContainer = document.getElementById('res-topic-grid');
+  topicContainer.innerHTML = '';
+  Object.keys(topicStats).sort().forEach(cat => {
+    const s = topicStats[cat];
+    const acc = s.attempted > 0 ? Math.round((s.correct / s.attempted) * 100) : 0;
+    const card = document.createElement('div');
+    card.className = 'res-topic-card';
+    card.innerHTML = `
+      <h4>${cat}</h4>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;">
+        <span>${s.correct}/${s.total} Correct</span>
+        <span>${acc}% Accuracy</span>
+      </div>
+      <div class="res-bar-wrap">
+        <div class="res-bar-fill" style="width:${acc}%;"></div>
+      </div>
+    `;
+    topicContainer.appendChild(card);
+  });
+
+  showScreen('result');
+}
+
+/* Review Screen */
+document.getElementById('btn-review-answers').addEventListener('click', () => {
+  renderReviewList();
+  showScreen('review');
+});
+document.getElementById('btn-back-score').addEventListener('click', () => showScreen('result'));
+document.getElementById('btn-restart-test').addEventListener('click', () => showScreen('start'));
+document.getElementById('btn-restart-test-2').addEventListener('click', () => showScreen('start'));
+
+document.querySelectorAll('.rev-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.rev-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.reviewFilter = btn.dataset.revFilter;
+    renderReviewList();
+  });
+});
+
+function renderReviewList() {
+  const container = document.getElementById('review-list');
+  container.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  state.activeQuestions.forEach((q, idx) => {
+    const userChoice = state.answers[idx];
+    const isAnswered = (userChoice !== undefined);
+    const isCorrect = (userChoice === q.answer);
+    const isMarked = state.marked.has(idx);
+
+    if (state.reviewFilter === 'incorrect' && (!isAnswered || isCorrect)) return;
+    if (state.reviewFilter === 'unattempted' && isAnswered) return;
+    if (state.reviewFilter === 'marked' && !isMarked) return;
+
+    const card = document.createElement('div');
+    card.className = 'rev-q';
+
+    let tagHtml = '';
+    if (!isAnswered) {
+      tagHtml = `<span class="tag unattempted">Unattempted</span>`;
+    } else if (isCorrect) {
+      tagHtml = `<span class="tag correct">✓ Correct</span>`;
+    } else {
+      tagHtml = `<span class="tag incorrect">✗ Incorrect</span>`;
+    }
+
+    let optionsHtml = '';
+    q.options.forEach((optText, oIdx) => {
+      let optClass = 'rev-opt';
+      if (oIdx === q.answer) optClass += ' correct';
+      if (userChoice === oIdx && userChoice !== q.answer) optClass += ' incorrect';
+
+      let marker = '';
+      if (userChoice === oIdx && isCorrect) marker = ' (Your Answer ✓)';
+      else if (userChoice === oIdx && !isCorrect) marker = ' (Your Answer ✗)';
+      else if (oIdx === q.answer) marker = ' (Correct Answer)';
+
+      optionsHtml += `
+        <div class="${optClass}">
+          <span style="font-family:'IBM Plex Mono',monospace;font-weight:600;">${letters[oIdx]})</span>
+          <span>${optText}${marker}</span>
+        </div>
+      `;
+    });
+
+    card.innerHTML = `
+      <div class="rq-head">
+        <span>Question ${idx + 1} · ${q.topic}</span>
+        <div>${tagHtml}</div>
+      </div>
+      <div class="rq-text">${q.question}</div>
+      <div style="margin-bottom:14px;">${optionsHtml}</div>
+      <div class="expl-panel">
+        <div class="expl-correct-line">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="currentColor"/><path d="M4.5 8l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Explanation:</span>
+        </div>
+        <p>${q.explanation}</p>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  if (container.children.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--ink-soft);">No questions match the selected filter.</div>`;
+  }
+}
+</script>
+</body>
+</html>
