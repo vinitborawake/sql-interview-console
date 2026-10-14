@@ -1,0 +1,667 @@
+================================================================================
+           SQL INTERVIEW REVISION GUIDE: MUST-KNOW QUESTIONS (Q47 - Q136)
+           Curated & Deduplicated High-Yield Sheet | Ready to Finish Today
+================================================================================
+
+Target: Questions 47 to 136 from A-Z Interview Q&A
+Format: Deduplicated Master Questions (1 Question 1 Time Only)
+Focus : High-Yield Concepts, Interview Traps, and Ready-to-Run SQL Queries
+Total Core Questions: 22 Master Questions
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+SECTION 1: FILTERING, AGGREGATION & OPERATORS (Q47 - Q53)
+  Q01. WHERE vs HAVING Clause & Aggregation Rules
+  Q02. GROUP BY vs ORDER BY & Execution Order
+  Q03. SQL Operators & The NULL Comparison Trap
+
+SECTION 2: INDEXES & QUERY PERFORMANCE (Q54 - Q56)
+  Q04. Clustered Index vs Non-Clustered Index & Read/Write Trade-offs
+
+SECTION 3: SUBQUERIES & PATTERN MATCHING (Q57 - Q64)
+  Q05. Regular Subquery vs Correlated Subquery vs JOIN
+  Q06. LIKE Operator vs Regular Expressions (REGEXP)
+
+SECTION 4: VIEWS & MATERIALIZED VIEWS (Q65 - Q78)
+  Q07. Views, Security Benefits & Updatable View Constraints
+  Q08. Standard View vs Materialized View & Refresh Strategies
+
+SECTION 5: JOINS & RELATIONAL INTEGRITY (Q79 - Q101)
+  Q09. The 5 Core Joins: INNER, LEFT, RIGHT, FULL OUTER, CROSS
+  Q10. SELF JOIN: Real-World Use Cases (Hierarchy & Duplicates)
+  Q11. Equi Join vs Non-Equi Join
+  Q12. Join Execution Algorithms (Hash Join, Merge Join, Nested Loops)
+  Q13. NULLs in Joins & JOIN vs EXISTS vs IN
+
+SECTION 6: TRIGGERS & DATABASE LOGIC (Q102 - Q111)
+  Q14. Triggers: BEFORE, AFTER, INSTEAD OF vs Stored Procedures
+  Q15. Why Triggers are "Hidden Business Logic" & Performance Hazards
+
+SECTION 7: SET OPERATIONS (Q112 - Q118)
+  Q16. UNION vs UNION ALL & Set Operation Rules
+
+SECTION 8: WINDOW FUNCTIONS (Q119 - Q127)
+  Q17. Window Functions vs GROUP BY: OVER(), PARTITION BY, ORDER BY
+  Q18. ROW_NUMBER() vs RANK() vs DENSE_RANK() (Handling Ties)
+  Q19. Interview Query: Finding the Nth Highest Salary / Top N per Dept
+  Q20. LEAD() & LAG(): Calculating Growth & Running Differences
+
+SECTION 9: COMMON TABLE EXPRESSIONS (CTEs) (Q128 - Q136)
+  Q21. CTE vs Subquery vs View vs Temporary Table
+  Q22. Recursive CTE: Structure (Anchor + Recursive Member) & Org Hierarchy
+
+================================================================================
+SECTION 1: FILTERING, AGGREGATION & OPERATORS (Q47 - Q53)
+================================================================================
+
+--------------------------------------------------------------------------------
+Q01. What is the difference between the WHERE and HAVING clauses in SQL?
+     Can HAVING be used without GROUP BY?
+--------------------------------------------------------------------------------
+ANSWER:
+1. WHERE filters individual rows BEFORE any grouping or aggregation takes place.
+   It cannot contain aggregate functions (e.g., WHERE SUM(salary) > 5000 is ILLEGAL).
+2. HAVING filters grouped rows AFTER the GROUP BY aggregation has occurred.
+   It evaluates aggregate expressions (e.g., HAVING COUNT(*) > 1).
+3. Can HAVING be used without GROUP BY?
+   YES. If used without GROUP BY, the entire table is treated as a single group.
+   Example: SELECT AVG(salary) FROM employees HAVING AVG(salary) > 50000;
+
+COMPARISON TABLE:
+  Feature          | WHERE Clause                    | HAVING Clause
+  -----------------+---------------------------------+---------------------------
+  Filter Timing    | Before GROUP BY                 | After GROUP BY
+  Input            | Individual table rows           | Aggregated groups
+  Aggregate Funcs  | NO (COUNT, SUM, AVG not allowed)| YES
+  Works With       | SELECT, UPDATE, DELETE          | Only SELECT
+  Performance      | Faster (reduces rows early)     | Slower (filters post-agg)
+
+SQL EXAMPLE:
+  SELECT department_id, COUNT(*) AS emp_count, AVG(salary) AS avg_sal
+  FROM employees
+  WHERE status = 'Active'               -- Row-level filter
+  GROUP BY department_id
+  HAVING COUNT(*) >= 5                  -- Group-level filter
+  ORDER BY avg_sal DESC;
+
+INTERVIEW PRO-TIP:
+Always filter as many rows as possible in WHERE rather than HAVING. Filtering early
+reduces the memory needed for sorting and grouping.
+
+--------------------------------------------------------------------------------
+Q02. What is the difference between GROUP BY and ORDER BY?
+     What is the logical order of query execution?
+--------------------------------------------------------------------------------
+ANSWER:
+1. GROUP BY collapses multiple rows sharing identical values into single summary rows.
+   It is strictly used for aggregation (COUNT, SUM, AVG, MIN, MAX).
+2. ORDER BY sorts the final output result set in ascending (ASC) or descending (DESC) order.
+   It does not group or collapse any rows.
+
+LOGICAL QUERY EXECUTION ORDER (Crucial Interview Question!):
+  1. FROM & JOIN     (Gathers source tables and Cartesian/join products)
+  2. WHERE           (Filters individual rows)
+  3. GROUP BY        (Aggregates rows into groups)
+  4. HAVING          (Filters grouped rows)
+  5. SELECT          (Calculates expressions & assigns aliases)
+  6. DISTINCT        (Eliminates duplicate rows)
+  7. ORDER BY        (Sorts the final display rows)
+  8. LIMIT / OFFSET  (Paginates the final output)
+
+INTERVIEW PRO-TIP:
+Why can't you use a SELECT column alias in a WHERE clause?
+Because WHERE (Step 2) executes before SELECT (Step 5)! But you CAN use column
+aliases in ORDER BY (Step 7) because ORDER BY runs after SELECT!
+
+--------------------------------------------------------------------------------
+Q03. What are SQL Operators, and what is the critical interview trap with NULL
+     comparisons (= NULL vs IS NULL)?
+--------------------------------------------------------------------------------
+ANSWER:
+SQL operators specify conditions and perform operations:
+  * Arithmetic : +, -, *, /, %
+  * Comparison : =, != (or <>), <, >, <=, >=
+  * Logical    : AND, OR, NOT, IN, BETWEEN, LIKE, EXISTS, ALL, ANY
+
+THE CRITICAL "THREE-VALUED LOGIC" TRAP:
+In SQL, NULL represents an "unknown value" or "missing data".
+- Any direct comparison with NULL using = or != evaluates to UNKNOWN, not TRUE or FALSE!
+- 'salary = NULL' evaluates to UNKNOWN. Even 'NULL = NULL' evaluates to UNKNOWN!
+- To check for NULL values, you MUST use 'IS NULL' or 'IS NOT NULL'.
+
+SQL EXAMPLE:
+  -- WRONG (Always returns 0 rows!):
+  SELECT * FROM employees WHERE manager_id = NULL;
+
+  -- CORRECT:
+  SELECT * FROM employees WHERE manager_id IS NULL;
+
+  -- Handling NULLs in expressions:
+  SELECT name, salary + COALESCE(bonus, 0) AS total_compensation
+  FROM employees;
+
+================================================================================
+SECTION 2: INDEXES & QUERY PERFORMANCE (Q54 - Q56)
+================================================================================
+
+--------------------------------------------------------------------------------
+Q04. What is an Index in SQL? Explain the core differences between a Clustered
+     Index and a Non-Clustered Index, and their trade-offs.
+--------------------------------------------------------------------------------
+ANSWER:
+An Index is an on-disk B-Tree data structure that speeds up data retrieval (SELECT)
+without scanning every page of a table, at the cost of slower writes (INSERT/UPDATE/DELETE).
+
+CLUSTERED vs NON-CLUSTERED INDEX:
+  Feature          | Clustered Index                | Non-Clustered Index
+  -----------------+--------------------------------+----------------------------
+  Physical Order   | Dictates physical order on disk| Separate structure; order independent
+  Number per Table | Exactly ONE per table          | Multiple (e.g. up to 999 in SQL Server)
+  Leaf Level       | Contains actual data rows      | Contains index keys + row locator pointer
+  Default Creation | Created on Primary Key         | Created on UNIQUE or custom indexes
+  Speed            | Fastest for range scans (BETWEEN)| Fast for lookups, extra hop to data page
+
+TRADE-OFFS:
+- Advantages: Dramatic speedup on SELECT, WHERE, JOIN, and ORDER BY queries.
+- Disadvantages: Consumes extra storage; every INSERT/UPDATE/DELETE must update
+  both the table and all its indexes, causing write overhead.
+
+SQL EXAMPLE:
+  -- Clustered index automatically created on PK:
+  CREATE TABLE orders (
+      order_id INT PRIMARY KEY,
+      customer_id INT,
+      order_date DATE,
+      total_amount DECIMAL(10,2)
+  );
+
+  -- Non-Clustered composite index for frequent filter:
+  CREATE INDEX idx_orders_cust_date ON orders(customer_id, order_date);
+
+================================================================================
+SECTION 3: SUBQUERIES & PATTERN MATCHING (Q57 - Q64)
+================================================================================
+
+--------------------------------------------------------------------------------
+Q05. What is the difference between a Regular Subquery and a Correlated Subquery?
+     Why are Correlated Subqueries often slower than JOINs?
+--------------------------------------------------------------------------------
+ANSWER:
+1. Regular (Independent) Subquery:
+   - Does NOT depend on the outer query.
+   - Executes ONCE independently; its result is passed to the outer query.
+   - Example: SELECT * FROM emp WHERE salary > (SELECT AVG(salary) FROM emp);
+
+2. Correlated Subquery:
+   - References a column from the outer query table (e.g., e.dept_id = o.dept_id).
+   - Executes REPEATEDLY — once for EVERY candidate row processed by the outer query!
+   - Because it runs N times (where N is outer table row count), performance is O(N*M).
+
+SQL COMPARISON:
+  -- Correlated Subquery (find employees earning above their department average):
+  SELECT e.name, e.salary, e.dept_id
+  FROM employees e
+  WHERE e.salary > (
+      SELECT AVG(sub.salary)
+      FROM employees sub
+      WHERE sub.dept_id = e.dept_id      -- References outer query alias 'e'
+  );
+
+  -- Optimized equivalent using JOIN (Engine can use Hash Join / Merge Join):
+  SELECT e.name, e.salary, e.dept_id
+  FROM employees e
+  INNER JOIN (
+      SELECT dept_id, AVG(salary) AS avg_sal
+      FROM employees
+      GROUP BY dept_id
+  ) d ON e.dept_id = d.dept_id AND e.salary > d.avg_sal;
+
+--------------------------------------------------------------------------------
+Q06. What is the difference between the LIKE operator and Regular Expressions (REGEXP)?
+--------------------------------------------------------------------------------
+ANSWER:
+- LIKE is simple wildcard matching standardized across all SQL dialects:
+    % represents zero, one, or multiple characters.
+    _ represents exactly one character.
+- REGEXP / RLIKE / ~ provides full regex pattern matching (character classes,
+  quantifiers, anchors, alternation) for complex validation (emails, phone numbers).
+
+SQL EXAMPLE:
+  -- LIKE: Find names starting with 'S' and ending with 'n'
+  SELECT * FROM users WHERE name LIKE 'S%n';
+
+  -- REGEXP: Find valid phone formats (e.g. 3 digits - 3 digits - 4 digits)
+  -- MySQL:
+  SELECT * FROM contacts WHERE phone REGEXP '^[0-9]{3}-[0-9]{3}-[0-9]{4}$';
+  -- PostgreSQL:
+  SELECT * FROM contacts WHERE phone ~ '^[0-9]{3}-[0-9]{3}-[0-9]{4}$';
+
+================================================================================
+SECTION 4: VIEWS & MATERIALIZED VIEWS (Q65 - Q78)
+================================================================================
+
+--------------------------------------------------------------------------------
+Q07. What is a View, what are its primary benefits (Security & Abstraction),
+     and when is a View UPDATABLE?
+--------------------------------------------------------------------------------
+ANSWER:
+A View is a virtual table defined by a stored SELECT query. It does not store physical
+data; whenever queried, the database dynamically executes the underlying definition.
+
+PRIMARY BENEFITS:
+1. Security: Grant users access to the view while restricting direct access to
+   underlying sensitive tables (e.g., hide SSN, credit cards, password hashes).
+2. Simplicity & Abstraction: Encapsulates 10-table joins into a simple SELECT * FROM my_view.
+3. Logical Data Independence: Underlying table schemas can be refactored without breaking
+   legacy client applications.
+
+UPDATABLE VIEW RULES:
+You can perform INSERT, UPDATE, DELETE through a view ONLY if:
+1. The view references exactly ONE base table.
+2. It does NOT contain DISTINCT, GROUP BY, HAVING, or Aggregate functions.
+3. It does NOT contain UNION / UNION ALL.
+4. All NOT NULL columns of the base table are included in the view (for INSERTs).
+5. WITH CHECK OPTION prevents inserting/updating rows that would violate the view's WHERE filter.
+
+--------------------------------------------------------------------------------
+Q08. What is the difference between a Standard View and a Materialized View?
+--------------------------------------------------------------------------------
+ANSWER:
+- Standard View:
+  Stores NO physical data on disk. Only stores the SQL query text.
+  Every query re-computes the joins and aggregates from scratch.
+- Materialized View:
+  Physically stores the resulting data on disk like a real table.
+  Queries run at table-read speed. Must be refreshed when base data changes.
+
+COMPARISON TABLE:
+  Property         | Standard View                   | Materialized View
+  -----------------+---------------------------------+---------------------------
+  Data Storage     | Virtual (Zero disk space)       | Physical copy stored on disk
+  Query Speed      | Slower (executes query on fly)  | Extremely fast (pre-computed)
+  Data Freshness   | 100% real-time (always live)    | Point-in-time snapshot
+  Indexes          | No direct index (except indexed views)| Supports indexes on columns
+  Best Use Case    | Security masking, simple views  | Analytics, heavy aggregates, BI dashboards
+
+SQL EXAMPLE (PostgreSQL):
+  CREATE MATERIALIZED VIEW mv_monthly_revenue AS
+  SELECT DATE_TRUNC('month', order_date) AS month, SUM(total_amount) AS revenue
+  FROM orders
+  GROUP BY DATE_TRUNC('month', order_date);
+
+  -- Refresh when new data arrives:
+  REFRESH MATERIALIZED VIEW CONCURRENTLY mv_monthly_revenue;
+
+================================================================================
+SECTION 5: JOINS & RELATIONAL INTEGRITY (Q79 - Q101)
+================================================================================
+
+--------------------------------------------------------------------------------
+Q09. Explain the 5 major types of Joins: INNER, LEFT, RIGHT, FULL OUTER, CROSS.
+--------------------------------------------------------------------------------
+ANSWER:
+Assume Table A (Left) and Table B (Right):
+1. INNER JOIN: Returns only rows where the join condition matches in BOTH tables.
+2. LEFT (OUTER) JOIN: Returns ALL rows from Table A, plus matching rows from Table B.
+   Unmatched rows from Table B are populated with NULL.
+3. RIGHT (OUTER) JOIN: Returns ALL rows from Table B, plus matching rows from Table A.
+   Unmatched rows from Table A are populated with NULL.
+4. FULL (OUTER) JOIN: Returns ALL rows from BOTH tables. Where there is no match on
+   either side, NULLs are filled in.
+5. CROSS JOIN: Produces the Cartesian Product (every row in A paired with every row in B).
+   If Table A has 100 rows and Table B has 50 rows, CROSS JOIN outputs 5,000 rows.
+
+SQL SYNTAX & MNEMONIC:
+  SELECT A.id, A.name, B.order_id, B.amount
+  FROM customers A
+  INNER JOIN orders B ON A.id = B.customer_id;
+
+INTERVIEW PRO-TIP:
+Why is RIGHT JOIN rarely used in production code?
+Because any RIGHT JOIN can be rewritten as a LEFT JOIN simply by swapping table order!
+Engineers prefer reading queries from Left to Right for code readability.
+
+--------------------------------------------------------------------------------
+Q10. What is a SELF JOIN? Give real-world scenario examples.
+--------------------------------------------------------------------------------
+ANSWER:
+A SELF JOIN is a regular join where a table is joined with ITSELF using table aliases.
+
+SCENARIO 1: Employee-Manager Hierarchy (Most common interview scenario!)
+  In an employees table, each employee row has a manager_id pointing to another employee_id.
+
+  SELECT e.name AS Employee, COALESCE(m.name, 'Top Boss') AS Manager
+  FROM employees e
+  LEFT JOIN employees m ON e.manager_id = m.employee_id;
+
+SCENARIO 2: Finding Duplicate Records
+  SELECT a.id, a.email
+  FROM users a
+  INNER JOIN users b ON a.email = b.email AND a.id < b.id;
+
+--------------------------------------------------------------------------------
+Q11. What is the difference between an Equi Join and a Non-Equi Join?
+--------------------------------------------------------------------------------
+ANSWER:
+- Equi Join: Uses the equality operator (=) in the join predicate (ON a.id = b.cust_id).
+- Non-Equi Join: Uses non-equality operators (<, >, <=, >=, BETWEEN) in the join condition.
+
+SCENARIO: Finding Salary Grades / Tax Brackets:
+  SELECT e.name, e.salary, g.grade_level
+  FROM employees e
+  INNER JOIN salary_grades g 
+      ON e.salary BETWEEN g.min_salary AND g.max_salary;
+
+--------------------------------------------------------------------------------
+Q12. How do database engines physically execute joins (Join Algorithms)?
+--------------------------------------------------------------------------------
+ANSWER:
+Relational query optimizers choose from 3 fundamental physical join algorithms:
+1. Nested Loop Join:
+   - Outer loop iterates over outer table; for each row, scans inner table.
+   - Best when outer table is small and inner table has an index on the join key. O(N * log M).
+2. Hash Join:
+   - Builds an in-memory Hash Table on the smaller table, then probes it with the larger table.
+   - Best for large datasets without indexes, for equi-joins (=). O(N + M).
+3. Merge Join (Sort-Merge):
+   - Both inputs must be sorted on the join key, then merges them like merge-sort.
+   - Best when both tables are already sorted (e.g., via Clustered Index). Highly efficient.
+
+--------------------------------------------------------------------------------
+Q13. What happens when columns involved in a Join contain NULL values?
+     How does JOIN compare to EXISTS and IN?
+--------------------------------------------------------------------------------
+ANSWER:
+1. NULL in Joins:
+   Since NULL = NULL is UNKNOWN (not true), rows with NULL in join keys will NEVER
+   match each other in an INNER JOIN!
+   In a LEFT JOIN, if the foreign key is NULL, the right side returns NULL.
+
+2. JOIN vs EXISTS vs IN:
+   - Use JOIN when you need to select columns from both tables.
+   - Use EXISTS when you only need to check for presence and avoid duplicate rows.
+     EXISTS stops scanning as soon as the first matching row is found (short-circuit).
+   - Beware: 'NOT IN' returns ZERO rows if the subquery returns even a single NULL value!
+     Always prefer 'NOT EXISTS' over 'NOT IN' when NULLs might be present.
+
+================================================================================
+SECTION 6: TRIGGERS & DATABASE LOGIC (Q102 - Q111)
+================================================================================
+
+--------------------------------------------------------------------------------
+Q14. What is a Trigger in SQL, what are the different types (BEFORE, AFTER, INSTEAD OF),
+     and how does a Trigger differ from a Stored Procedure?
+--------------------------------------------------------------------------------
+ANSWER:
+A Trigger is a special stored program that executes AUTOMATICALLY in response to an
+event (INSERT, UPDATE, DELETE) on a table or view.
+
+TRIGGER TYPES:
+1. BEFORE Trigger: Fires BEFORE the row change is committed. Ideal for validation
+   and data sanitization (e.g. converting email to lowercase, preventing negative salary).
+2. AFTER Trigger: Fires AFTER the row change succeeds. Ideal for audit logging,
+   notifying external queues, or writing to historical audit tables.
+3. INSTEAD OF Trigger: Fires IN PLACE of the DML command. Chiefly used on VIEWS to
+   make complex multi-table views updatable!
+
+TRIGGER vs STORED PROCEDURE:
+  Feature          | Trigger                         | Stored Procedure
+  -----------------+---------------------------------+---------------------------
+  Invocation       | Implicit / Automatic on event   | Explicit (CALL or EXEC)
+  Parameters       | Cannot accept parameters        | Accepts IN, OUT, INOUT params
+  Transaction      | Runs within triggering trans.   | Can manage its own commits
+  Return Values    | Cannot return values            | Can return status or resultsets
+
+--------------------------------------------------------------------------------
+Q15. Why should Triggers be used cautiously, and why are they called "Hidden Business Logic"?
+--------------------------------------------------------------------------------
+ANSWER:
+Triggers are considered "hidden business logic" because they execute invisibly behind
+the scenes. A developer running a simple 'UPDATE accounts SET balance = balance - 100'
+may not realize 5 cascading triggers are firing.
+
+HAZARDS & CAVEATS:
+1. Hard to Debug: Errors in triggers bubble up generically, obscuring the root cause.
+2. Cascading / Mutating Table Errors: Trigger on Table A updates Table B, which updates
+   Table A, triggering an infinite loop or mutating-table deadlock.
+3. Massive Write Performance Penalties: In bulk batch inserts (e.g. 500,000 rows),
+   row-level triggers fire 500,000 times, grinding the database to a halt.
+
+================================================================================
+SECTION 7: SET OPERATIONS (Q112 - Q118)
+================================================================================
+
+--------------------------------------------------------------------------------
+Q16. What is the difference between UNION and UNION ALL?
+     Why is UNION ALL significantly faster, and what are the strict prerequisite rules?
+--------------------------------------------------------------------------------
+ANSWER:
+Both operators combine rows from two or more SELECT queries into a single resultset.
+
+UNION vs UNION ALL:
+- UNION: Merges resultsets and REMOVES all duplicate rows.
+  To remove duplicates, the engine must perform an expensive in-memory/disk SORT
+  or hash deduplication step.
+- UNION ALL: Merges resultsets and KEEPS all duplicate rows.
+  It performs NO sorting or deduplication. It simply concatenates rows directly.
+  Therefore, UNION ALL is orders of magnitude FASTER than UNION.
+
+STRICT PREREQUISITE RULES:
+1. Both SELECT statements must have the exact SAME number of columns.
+2. Corresponding columns must have compatible data types.
+3. The column names of the final resultset are derived from the FIRST SELECT query.
+4. ORDER BY can only appear ONCE, at the very end of the entire query.
+
+INTERVIEW PRO-TIP:
+Always use UNION ALL by default unless business logic explicitly demands deduplication!
+
+================================================================================
+SECTION 8: WINDOW FUNCTIONS (Q119 - Q127)
+================================================================================
+
+--------------------------------------------------------------------------------
+Q17. What is a Window Function, and how does it fundamentally differ from GROUP BY?
+     Explain the roles of OVER(), PARTITION BY, and ORDER BY.
+--------------------------------------------------------------------------------
+ANSWER:
+1. Fundamental Difference:
+   - GROUP BY collapses multiple rows into a single summary row. Individual row details are lost.
+   - Window Functions perform calculations across a set of table rows (a "window"),
+     but KEEP all individual rows intact! Each original row retains its own identity.
+
+2. Syntax Structure:
+   <Function>() OVER (
+       PARTITION BY <col1>      -- Divides rows into independent calculation windows
+       ORDER BY <col2>          -- Dictates calculation sequence within the window
+       ROWS/RANGE <frame>       -- Specifies sliding window boundaries
+   )
+
+SQL EXAMPLE:
+  SELECT 
+      name, 
+      dept_id, 
+      salary,
+      -- Aggregate window function:
+      AVG(salary) OVER(PARTITION BY dept_id) AS dept_avg_salary,
+      -- Running total:
+      SUM(salary) OVER(PARTITION BY dept_id ORDER BY salary) AS running_dept_salary
+  FROM employees;
+
+--------------------------------------------------------------------------------
+Q18. What is the exact difference between ROW_NUMBER(), RANK(), and DENSE_RANK()?
+     How do they handle ties / duplicate values?
+--------------------------------------------------------------------------------
+ANSWER:
+Assume salaries: 1000, 1000, 800, 700:
+
+1. ROW_NUMBER():
+   - Assigns a unique, sequential integer to every row regardless of duplicate values.
+   - Never produces ties; never skips numbers.
+   - Values: 1, 2, 3, 4
+
+2. RANK():
+   - Assigns identical ranks to tied values.
+   - SKIPS subsequent ranks to reflect how many items were tied.
+   - Values: 1, 1, 3, 4   (Notice: Rank 2 was skipped!)
+
+3. DENSE_RANK():
+   - Assigns identical ranks to tied values.
+   - DOES NOT SKIP subsequent ranks. The next distinct value gets the immediate next rank.
+   - Values: 1, 1, 2, 3   (Notice: No gaps!)
+
+INTERVIEW CHEAT-SHEET TABLE:
+  Salary | ROW_NUMBER() | RANK() | DENSE_RANK()
+  -------+--------------+--------+--------------
+  1000   | 1            | 1      | 1
+  1000   | 2            | 1      | 1
+  800    | 3            | 3      | 2
+  700    | 4            | 4      | 3
+
+--------------------------------------------------------------------------------
+Q19. Practical Interview Query: How do you write a query to find the Nth Highest
+     Salary or Top-N Earners per Department?
+--------------------------------------------------------------------------------
+ANSWER:
+Always use DENSE_RANK() in a CTE or Subquery to properly account for duplicate salaries.
+
+QUERY (Find 2nd Highest Salary across the company):
+  WITH RankedSalaries AS (
+      SELECT 
+          employee_id, 
+          name, 
+          salary,
+          DENSE_RANK() OVER (ORDER BY salary DESC) AS sal_rank
+      FROM employees
+  )
+  SELECT name, salary
+  FROM RankedSalaries
+  WHERE sal_rank = 2;
+
+QUERY (Find Top-2 Earners IN EACH DEPARTMENT):
+  WITH DeptRanks AS (
+      SELECT 
+          employee_id, 
+          name, 
+          department_id, 
+          salary,
+          DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS dept_rank
+      FROM employees
+  )
+  SELECT department_id, name, salary, dept_rank
+  FROM DeptRanks
+  WHERE dept_rank <= 2
+  ORDER BY department_id, dept_rank;
+
+--------------------------------------------------------------------------------
+Q20. How do LEAD() and LAG() window functions work, and how are they used for
+     Period-over-Period (Month-over-Month) sales calculations?
+--------------------------------------------------------------------------------
+ANSWER:
+- LAG(col, offset, default): Accesses data from a PREVIOUS row in the window without a self-join.
+- LEAD(col, offset, default): Accesses data from a SUBSEQUENT (next) row in the window.
+
+SQL EXAMPLE (Month-over-Month Sales Growth):
+  WITH MonthlySales AS (
+      SELECT 
+          DATE_TRUNC('month', order_date) AS sales_month,
+          SUM(total_amount) AS revenue
+      FROM orders
+      GROUP BY DATE_TRUNC('month', order_date)
+  )
+  SELECT 
+      sales_month,
+      revenue AS current_month_rev,
+      LAG(revenue, 1) OVER (ORDER BY sales_month) AS prev_month_rev,
+      ROUND(
+          (revenue - LAG(revenue, 1) OVER (ORDER BY sales_month)) * 100.0 / 
+          NULLIF(LAG(revenue, 1) OVER (ORDER BY sales_month), 0), 
+          2
+      ) AS mom_growth_pct
+  FROM MonthlySales;
+
+================================================================================
+SECTION 9: COMMON TABLE EXPRESSIONS (CTEs) & RECURSIVE QUERIES (Q128 - Q136)
+================================================================================
+
+--------------------------------------------------------------------------------
+Q21. What is a CTE (Common Table Expression), and what are the key differences
+     between a CTE, a Subquery, a View, and a Temporary Table?
+--------------------------------------------------------------------------------
+ANSWER:
+A CTE (WITH clause) is a temporary named result set defined within the execution scope
+of a single SELECT, INSERT, UPDATE, or DELETE statement.
+
+COMPARISON TABLE (The Ultimate Architecture Question):
+  Feature       | CTE                 | Subquery          | View              | Temp Table (#temp)
+  --------------+---------------------+-------------------+-------------------+---------------------
+  Scope         | Single query only   | Single query only | Database object   | Current session
+  Storage       | Memory / Virtual    | Memory / Virtual  | Stored SQL text   | Tempdb on disk
+  Reusability   | Multiple times in Q | Once per nest     | Global for anyone | Multiple queries in session
+  Can Index?    | NO                  | NO                | Only Indexed Views| YES (Add PK/indexes)
+  Readability   | High (top-to-bottom)| Low (nested inside)| High              | High (script-like)
+  Recursion     | YES                 | NO                | NO                | NO
+
+WHEN TO USE WHICH:
+- Use CTE for clean code readability, multi-step calculations, and recursive tree traversal.
+- Use Temporary Table when working with huge intermediate datasets (>100k rows) where you need
+  indexes or multiple queries in a stored procedure.
+- Use View for security access control and company-wide reusable query models.
+
+--------------------------------------------------------------------------------
+Q22. What is a Recursive CTE, how is it structured (Anchor + Recursive Member),
+     and how is it used to query hierarchical data (Org Tree)?
+--------------------------------------------------------------------------------
+ANSWER:
+A Recursive CTE references itself iteratively until a termination condition is reached.
+It is primarily used for tree structures, organizational charts, bill of materials,
+and graph paths.
+
+MANDATORY 3-PART STRUCTURE:
+1. Anchor Member: An initial query that returns the base starting rows (e.g. CEO where manager_id IS NULL).
+2. UNION ALL: The set operator connecting the anchor and recursive query.
+3. Recursive Member: A query that joins back to the CTE name itself, referencing the previous level.
+   Recursion stops automatically when the recursive member returns 0 rows!
+
+SQL EXAMPLE (Organizational Chart with Level Hierarchy):
+  WITH RECURSIVE OrgHierarchy AS (
+      -- 1. Anchor Member: Find Top-Level Boss (Level 1)
+      SELECT 
+          employee_id, 
+          name, 
+          manager_id, 
+          1 AS org_level
+      FROM employees
+      WHERE manager_id IS NULL
+
+      UNION ALL
+
+      -- 2. Recursive Member: Join subordinates to previous level
+      SELECT 
+          e.employee_id, 
+          e.name, 
+          e.manager_id, 
+          h.org_level + 1
+      FROM employees e
+      INNER JOIN OrgHierarchy h ON e.manager_id = h.employee_id
+  )
+  SELECT 
+      org_level,
+      name, 
+      manager_id
+  FROM OrgHierarchy
+  ORDER BY org_level, name;
+
+================================================================================
+                    FINAL 5-MINUTE INTERVIEW CHECKLIST
+================================================================================
+[✓] WHERE vs HAVING: WHERE before group; HAVING after group.
+[✓] Logical Query Execution: FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT.
+[✓] NULL Trap: Always use 'IS NULL', never '= NULL'. NOT IN fails if NULL exists.
+[✓] Clustered Index: Sorts physical data on disk (only 1). Non-clustered has pointers (many).
+[✓] Joins: INNER (matches), LEFT (all left + matches), SELF (table with itself).
+[✓] UNION vs UNION ALL: UNION ALL does not deduplicate; is much faster.
+[✓] ROW_NUMBER vs RANK vs DENSE_RANK: 1,2,3,4 vs 1,1,3,4 vs 1,1,2,3.
+[✓] Nth Salary: Always use DENSE_RANK() in a CTE with 'WHERE rank = N'.
+[✓] Recursive CTE: Anchor Member + UNION ALL + Recursive Member.
+================================================================================
